@@ -1,0 +1,1558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GlobalEdge — Financial Intelligence · vjra.us</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --accent: #b85042;
+    --ink: #1a1a2e;
+    --muted: #767676;
+    --bg: #f8f4ee;
+    --surface: #f4f3f0;
+    --border: #e8e6e1;
+    --green: #2d6a4f;
+    --amber: #b45309;
+    --purple: #6d28d9;
+    --blue: #1d4ed8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: #2b2b2b;
+    line-height: 1.6;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  #tab-chat .info-section-head {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 1.1rem;
+    letter-spacing: .02em;
+  }
+
+  /* ── Header ── */
+  header {
+    border-bottom: 4px solid var(--accent);
+    padding: 1.25rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    background: var(--bg);
+  }
+  .kicker {
+    text-transform: uppercase; letter-spacing: .12em; font-size: .7rem;
+    font-weight: 700; color: var(--accent); margin-bottom: .2rem;
+  }
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.7rem; color: var(--ink); font-weight: 400;
+    letter-spacing: .01em;
+  }
+  .agent-pill {
+    display: flex; align-items: center; gap: 8px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: .75rem;
+    background: var(--surface);
+    transition: border-color .3s;
+  }
+  .agent-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--muted);
+    transition: background .3s;
+    flex-shrink: 0;
+  }
+  .agent-label { color: var(--muted); }
+  .agent-label strong { color: var(--ink); }
+
+  /* ── API key gate ── */
+  #gate {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    padding: 2rem;
+  }
+  .gate-card {
+    max-width: 480px; width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem 2.5rem;
+    background: var(--bg);
+  }
+  .gate-card h2 {
+    font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 500;
+    color: var(--ink); margin-bottom: .5rem;
+  }
+  .gate-card p { font-size: .9rem; color: var(--muted); margin-bottom: 1.5rem; }
+  .gate-card input {
+    width: 100%; padding: .65rem .9rem;
+    border: 1px solid var(--border); border-radius: 6px;
+    font-size: .9rem; font-family: monospace;
+    background: var(--surface); color: var(--ink);
+    margin-bottom: .75rem;
+    outline: none;
+  }
+  .gate-card input:focus { border-color: var(--accent); }
+  .gate-card button {
+    width: 100%; padding: .7rem;
+    background: var(--accent); color: #fff;
+    border: none; border-radius: 6px;
+    font-size: .9rem; font-weight: 600;
+    cursor: pointer; transition: background .15s;
+  }
+  .gate-card button:hover { background: #a04038; }
+  .gate-note {
+    font-size: .75rem; color: var(--muted);
+    margin-top: .75rem; text-align: center;
+  }
+
+  /* ── Main layout ── */
+  #app { flex: 1; display: none; flex-direction: column; overflow: hidden; }
+
+  /* ── Tab bar ── */
+  .tab-bar {
+    display: flex;
+    border-bottom: 2px solid var(--border);
+    background: var(--bg);
+    flex-shrink: 0;
+  }
+  .tab {
+    padding: .7rem 1.5rem;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: .8rem;
+    font-weight: 600;
+    color: var(--muted);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    cursor: pointer;
+    transition: color .15s, border-color .15s;
+    letter-spacing: .01em;
+  }
+  .tab:hover { color: var(--ink); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ── Tab panels ── */
+  .tab-panel {
+    flex: 1;
+    overflow: hidden;
+    display: none;
+    flex-direction: column;
+  }
+  .tab-panel.active { display: flex; }
+
+  #tab-overview {
+    overflow-y: auto;
+    padding: 1.5rem 2rem;
+    display: none;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  #tab-overview.active { display: flex; }
+
+  .body-row {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+  }
+
+  .chat-col {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-right: 1px solid var(--border);
+  }
+
+  #chat {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  #chat::-webkit-scrollbar { width: 4px; }
+  #chat::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .sidebar {
+    width: 300px;
+    flex-shrink: 0;
+    overflow-y: auto;
+    padding: 1.25rem 1.25rem 2rem;
+    background: var(--bg);
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  .sidebar::-webkit-scrollbar { width: 3px; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .sidebar-section { margin-bottom: 1.75rem; }
+  .sidebar-kicker {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: .65rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .12em;
+    color: var(--accent);
+    margin-bottom: .7rem;
+    padding-bottom: .4rem;
+    border-bottom: 2px solid var(--accent);
+  }
+
+  .routing-diagram { font-family: 'Inter', system-ui, sans-serif; font-size: .75rem; }
+  .route-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: .55rem; }
+  .route-from { display: flex; align-items: center; gap: 5px; font-weight: 700; color: var(--ink); white-space: nowrap; min-width: 68px; }
+  .route-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .route-arrow { color: var(--accent); flex-shrink: 0; margin-top: 1px; }
+  .route-targets { color: var(--muted); line-height: 1.45; }
+  .route-targets b { color: var(--ink); font-weight: 600; }
+
+  .agent-table { width: 100%; border-collapse: collapse; }
+  .agent-table tr { border-bottom: 1px solid var(--border); }
+  .agent-table tr:last-child { border-bottom: none; }
+  .agent-table td {
+    padding: .45rem .3rem; font-size: .8rem; vertical-align: top; line-height: 1.45;
+  }
+  .agent-table td:first-child {
+    font-family: 'Cormorant Garamond', serif; font-weight: 700; color: var(--ink); width: 40%; padding-right: .5rem;
+  }
+  .agent-table td:last-child { color: var(--muted); font-family: 'Inter', system-ui, sans-serif; font-size: .75rem; }
+  .agent-table .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; vertical-align: middle; flex-shrink: 0; }
+
+  .q-group { margin-bottom: 1rem; }
+  .q-group-label { font-family: 'Inter', system-ui, sans-serif; font-size: .63rem; font-weight: 700; text-transform: uppercase; letter-spacing: .09em; color: var(--muted); margin-bottom: .4rem; }
+  .q-item {
+    display: block; font-size: .82rem; font-family: 'Cormorant Garamond', serif; font-style: italic;
+    color: var(--ink); padding: .28rem .45rem; border-radius: 4px; cursor: pointer; line-height: 1.45;
+    transition: background .12s, color .12s; margin-bottom: 1px;
+  }
+  .q-item:hover { background: var(--surface); color: var(--accent); font-style: normal; }
+
+  .card-grid-2 { padding: .75rem 1rem; display: grid; grid-template-columns: 1fr 1fr; gap: .75rem 1.5rem; }
+  .card-grid-3 { padding: .75rem 1rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: .6rem; }
+
+  /* ── Agent orbit diagram ── */
+  .agent-orbit-wrap { padding: .9rem 1.5rem .75rem; background: var(--surface); border-bottom: 1px solid var(--border); }
+  .orbit-row { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; justify-content: center; }
+  .orbit-node { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .orbit-ball {
+    width: 44px; height: 44px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem; font-weight: 700;
+    box-shadow: inset -2px -2px 5px rgba(0,0,0,.35), inset 1px 1px 4px rgba(255,255,255,.3), 0 3px 10px rgba(0,0,0,.2);
+    text-shadow: 0 1px 2px rgba(0,0,0,.4);
+    transition: transform .15s, filter .15s;
+  }
+  #ob-g { animation: ballGlow 5s ease-in-out infinite; animation-delay: 0s; }
+  #ob-n { animation: ballGlow 5s ease-in-out infinite; animation-delay: 1s; }
+  #ob-s { animation: ballGlow 5s ease-in-out infinite; animation-delay: 2s; }
+  #ob-e { animation: ballGlow 5s ease-in-out infinite; animation-delay: 3s; }
+  @keyframes ballGlow {
+    0%,8%,100% { transform: scale(1); filter: brightness(1); }
+    4%          { transform: scale(1.18); filter: brightness(1.4); }
+  }
+
+  .orbit-arrow-wrap { position: relative; display: flex; align-items: center; margin-top: -14px; }
+  .orbit-arrow { font-size: 1.1rem; color: var(--border); margin-top: -12px; }
+  .orbit-arrow-wrap::after {
+    content: ''; position: absolute; top: 50%; left: 0;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent); box-shadow: 0 0 6px 2px rgba(184,80,66,.6);
+    transform: translateY(-50%) translateX(-4px); opacity: 0;
+  }
+  .orbit-arrow-wrap:nth-child(2)::after  { animation: packetMove 5s linear infinite; animation-delay: 0.5s; }
+  .orbit-arrow-wrap:nth-child(4)::after  { animation: packetMove 5s linear infinite; animation-delay: 1.5s; }
+  .orbit-arrow-wrap:nth-child(6)::after  { animation: packetMove 5s linear infinite; animation-delay: 2.5s; }
+  .orbit-arrow-wrap:nth-child(8)::after  { animation: packetMove 5s linear infinite; animation-delay: 3.5s; }
+  .orbit-arrow-wrap:nth-child(10)::after { animation: packetMove 5s linear infinite; animation-delay: 4.3s; }
+  @keyframes packetMove {
+    0%    { opacity: 0; left: 0; }
+    5%    { opacity: 1; }
+    45%   { opacity: 1; }
+    50%   { opacity: 0; left: calc(100% - 4px); }
+    100%  { opacity: 0; left: calc(100% - 4px); }
+  }
+
+  .orbit-person { font-size: 1.7rem; line-height: 1; }
+  .orbit-wave { font-size: 1.5rem; color: var(--accent); opacity: .4; letter-spacing: -2px; animation: waveBreath 3s ease-in-out infinite; }
+  @keyframes waveBreath { 0%,100% { opacity: .35; } 50% { opacity: .8; } }
+  .orbit-label { font-size: .6rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; }
+  .orbit-caption { text-align: center; font-size: .72rem; font-family: 'Cormorant Garamond', serif; font-style: italic; color: var(--muted); margin-top: .6rem; }
+
+  /* ── Greeter info sections ── */
+  .greeter-info { display: flex; flex-direction: column; gap: 0; overflow-y: auto; flex-shrink: 0; border-top: 2px solid var(--border); margin-top: .5rem; }
+  .greeter-info::-webkit-scrollbar { width: 3px; }
+  .greeter-info::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .info-section { border-bottom: 1px solid var(--border); }
+  .info-section:last-child { border-bottom: none; }
+  .info-section-head {
+    background: var(--surface); padding: .45rem 1.5rem; border-bottom: 1px solid var(--border);
+    font-size: .63rem; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: var(--accent);
+  }
+  .info-section-body { padding: .65rem 1.5rem .8rem; }
+
+  .msg { display: flex; gap: 10px; animation: fadeUp .2s ease; }
+  .msg.user { flex-direction: row-reverse; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  .avatar {
+    width: 30px; height: 30px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; flex-shrink: 0;
+    background: var(--surface); border: 1px solid var(--border); margin-top: 2px;
+  }
+  .msg.user .avatar { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  .bubble {
+    max-width: 72%; background: #fff; border: 1px solid var(--border);
+    border-radius: 10px; padding: .75rem 1rem; font-size: .88rem; line-height: 1.65;
+  }
+  .msg.user .bubble { background: var(--surface); }
+
+  .agent-tag { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; margin-bottom: .3rem; opacity: .75; }
+  .agent-tag.greeter { color: var(--muted); }
+  .msg.bot.greeter-msg .bubble {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 1.05rem; font-weight: 400; line-height: 1.75; letter-spacing: .01em;
+  }
+  .agent-tag.news { color: var(--green); }
+  .agent-tag.securities  { color: var(--amber); }
+  .agent-tag.executive { color: var(--purple); }
+
+  .thinking { display: flex; gap: 5px; padding: 4px 0; }
+  .thinking b { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); display: block; animation: blink 1.2s infinite; }
+  .thinking b:nth-child(2) { animation-delay: .2s; }
+  .thinking b:nth-child(3) { animation-delay: .4s; }
+  @keyframes blink { 0%,80%,100%{opacity:.25} 40%{opacity:1} }
+
+  footer {
+    border-top: 1px solid var(--border); padding: .85rem 1.5rem 1rem;
+    background: var(--bg); flex-shrink: 0;
+  }
+  .footer-inner { max-width: 100%; margin: 0; }
+  .input-row {
+    display: flex; gap: 8px; border: 1px solid var(--border); border-radius: 8px;
+    padding: 6px 6px 6px 12px; background: #fff; transition: border-color .2s;
+  }
+  .input-row:focus-within { border-color: var(--accent); }
+  #msg {
+    flex: 1; border: none; outline: none; font-size: .9rem; resize: none;
+    background: transparent; color: var(--ink); line-height: 1.5; max-height: 90px; overflow-y: auto;
+  }
+  #msg::placeholder { color: #bbb; }
+  .btn {
+    border: none; cursor: pointer; border-radius: 6px; width: 34px; height: 34px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; background: transparent; color: var(--muted); transition: all .15s; flex-shrink: 0;
+  }
+  .btn:hover { background: var(--surface); color: var(--ink); }
+  .btn.recording { color: var(--accent); background: #fce8e6; }
+  #sendBtn { background: var(--accent); color: #fff; }
+  #sendBtn:hover { background: #a04038; color: #fff; }
+  #sendBtn:disabled { opacity: .4; cursor: not-allowed; }
+
+  .footer-meta {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: .6rem; font-size: .72rem; color: #bbb;
+  }
+  #voiceStatus { min-height: 14px; }
+  #resetBtn { background: none; border: none; cursor: pointer; color: #bbb; font-size: .72rem; padding: 2px 6px; border-radius: 4px; }
+  #resetBtn:hover { color: var(--muted); background: var(--surface); }
+
+  #sidebarToggle {
+    display: none; background: none; border: 1px solid var(--border);
+    border-radius: 6px; padding: 4px 10px; font-size: .75rem; color: var(--muted);
+    cursor: pointer; font-family: 'Inter', sans-serif;
+  }
+  #sidebarToggle:hover { color: var(--ink); border-color: var(--ink); }
+
+  @media (max-width: 768px) {
+    header { padding: .9rem 1rem; }
+    h1 { font-size: 1.1rem; }
+    .agent-pill { display: none; }
+    body, #app { overflow-x: hidden; }
+    #chat { padding: 1rem; }
+    #tab-overview { padding: 1rem; }
+    .sidebar { padding: 1rem; }
+    footer { padding: .7rem 1rem .85rem; }
+    .bubble { max-width: 92%; font-size: .85rem; }
+    .tab { padding: .6rem .9rem; font-size: .75rem; }
+    .card-grid-2 { grid-template-columns: 1fr; }
+    .card-grid-3 { grid-template-columns: 1fr 1fr; }
+    .body-row { flex-direction: column; }
+    .chat-col { border-right: none; }
+    .sidebar { display: none; width: 100%; border-top: 1px solid var(--border); }
+    .sidebar.open { display: block; }
+    #sidebarToggle { display: inline-block; }
+  }
+  @media (max-width: 480px) {
+    .card-grid-2, .card-grid-3 { grid-template-columns: 1fr; }
+    h1 { font-size: 1rem; }
+    .tab { padding: .55rem .7rem; font-size: .72rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="kicker">VJRA.US / GLOBALEDGE</div>
+    <h1>GlobalEdge Financial Intelligence</h1>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <a href="/" style="font-size:.75rem;color:var(--muted);text-decoration:none;">&larr; Research Library</a>
+    <div class="agent-pill" id="agentPill">
+      <div class="agent-dot" id="agentDot"></div>
+      <div class="agent-label">Agent: <strong id="agentName">Greeter</strong></div>
+    </div>
+  </div>
+</header>
+
+<!-- API key gate -->
+<div id="gate">
+  <div class="gate-card">
+    <h2>Enter your API Key</h2>
+    <p>Your Anthropic API key is used directly in the browser to call Claude. It is stored only in this browser session and never sent to any server.</p>
+    <input type="password" id="apiKeyInput" placeholder="sk-ant-api03-..." autocomplete="off"/>
+    <button onclick="startApp()">Launch Intelligence Agent</button>
+    <p class="gate-note">Don't have a key? Get one at <strong>console.anthropic.com</strong></p>
+  </div>
+</div>
+
+<!-- Main app -->
+<div id="app">
+
+  <!-- Tab bar -->
+  <div class="tab-bar">
+    <button class="tab active" onclick="switchTab('overview')">Business Problem &amp; Solution</button>
+    <button class="tab" onclick="switchTab('chat')">Intelligence Agent</button>
+    <button class="tab" onclick="switchTab('eval')">Evaluation Dashboard</button>
+  </div>
+
+  <!-- Tab 1: Overview -->
+  <div id="tab-overview" class="tab-panel active">
+    <div style="display:flex;flex-direction:column;gap:.75rem;">
+
+      <!-- Card 01: Business Problem -->
+      <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+        <div style="background:var(--surface);padding:.5rem 1rem;border-bottom:1px solid var(--border);">
+          <span style="font-family:'Inter',sans-serif;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);">01 &middot; Business Problem</span>
+        </div>
+        <div class="card-grid-2">
+          <div>
+            <div style="font-family:'Inter',sans-serif;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin-bottom:.35rem;">The Problem</div>
+            <div style="font-size:.78rem;color:var(--muted);line-height:1.6;">GlobalEdge Brokerage has <strong style="color:var(--ink)">400 brokers</strong> serving <strong style="color:var(--ink)">180K clients</strong> across <strong style="color:var(--ink)">12 countries</strong>. Each morning, 60&ndash;80 financial news articles and SEC filings are published. Brokers can only read <strong style="color:var(--ink)">20&ndash;30%</strong> before their first client call &mdash; creating a structural intelligence gap. When clients challenge recommendations, brokers can't cite sources &mdash; exposing the firm to trust erosion and compliance risk.</div>
+          </div>
+          <div>
+            <div style="font-family:'Inter',sans-serif;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin-bottom:.35rem;">The Solution</div>
+            <div style="font-size:.78rem;color:var(--muted);line-height:1.6;">A <strong style="color:var(--ink)">no-code RAG-based market intelligence system</strong> built with n8n that ingests financial news, stock prices, and SEC filings into Pinecone. Brokers query in plain English and get sourced, grounded answers with <strong style="color:var(--ink)">LLM-as-a-Judge</strong> quality evaluation on every response.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 02: Solution Description -->
+      <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+        <div style="background:var(--surface);padding:.5rem 1rem;border-bottom:1px solid var(--border);">
+          <span style="font-family:'Inter',sans-serif;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);">02 &middot; Solution Description</span>
+        </div>
+        <div class="card-grid-2">
+          <div>
+            <div style="font-family:'Inter',sans-serif;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin-bottom:.35rem;">Why Not Manual Research?</div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div style="font-size:.73rem;padding:.4rem .5rem;background:#fef2f2;border-left:2px solid #f87171;border-radius:0 4px 4px 0;color:#7f1d1d;line-height:1.45;">70&ndash;80% of morning content goes unread</div>
+              <div style="font-size:.73rem;padding:.4rem .5rem;background:#fef2f2;border-left:2px solid #f87171;border-radius:0 4px 4px 0;color:#7f1d1d;line-height:1.45;">Brokers can't cite sources when challenged</div>
+              <div style="font-size:.73rem;padding:.4rem .5rem;background:#fef2f2;border-left:2px solid #f87171;border-radius:0 4px 4px 0;color:#7f1d1d;line-height:1.45;">Compliance review happens after client calls, not before</div>
+            </div>
+          </div>
+          <div>
+            <div style="font-family:'Inter',sans-serif;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin-bottom:.35rem;">Why RAG + LLM-as-Judge?</div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div style="font-size:.73rem;padding:.4rem .5rem;background:#f0fdf4;border-left:2px solid #4ade80;border-radius:0 4px 4px 0;color:#14532d;line-height:1.45;">Every answer grounded in retrieved context</div>
+              <div style="font-size:.73rem;padding:.4rem .5rem;background:#f0fdf4;border-left:2px solid #4ade80;border-radius:0 4px 4px 0;color:#14532d;line-height:1.45;">Source citations (article, filing, date) on every response</div>
+              <div style="font-size:.73rem;padding:.4rem .5rem;background:#f0fdf4;border-left:2px solid #4ade80;border-radius:0 4px 4px 0;color:#14532d;line-height:1.45;">Automated quality scoring &mdash; Relevance, Groundedness, Accuracy, Completeness, Risk Awareness</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 03: Technical Architecture -->
+      <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+        <div style="background:var(--surface);padding:.5rem 1rem;border-bottom:1px solid var(--border);">
+          <span style="font-family:'Inter',sans-serif;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);">03 &middot; Technical Architecture</span>
+        </div>
+        <div class="card-grid-3">
+          <div style="padding:.5rem .6rem;background:var(--surface);border-radius:6px;">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:.85rem;font-weight:600;color:var(--ink);margin-bottom:2px;">Orchestration</div>
+            <div style="font-size:.72rem;color:var(--muted);line-height:1.4;"><strong style="color:var(--ink)">n8n</strong><br>No-code workflow automation</div>
+          </div>
+          <div style="padding:.5rem .6rem;background:var(--surface);border-radius:6px;">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:.85rem;font-weight:600;color:var(--ink);margin-bottom:2px;">Vector DB</div>
+            <div style="font-size:.72rem;color:var(--muted);line-height:1.4;"><strong style="color:var(--ink)">Pinecone</strong><br>Index: <code style="font-size:.65rem;background:#e8e6e1;padding:1px 3px;border-radius:2px;">global-edge</code><br>NS: <code style="font-size:.65rem;background:#e8e6e1;padding:1px 3px;border-radius:2px;">globaledge-rag</code></div>
+          </div>
+          <div style="padding:.5rem .6rem;background:var(--surface);border-radius:6px;">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:.85rem;font-weight:600;color:var(--ink);margin-bottom:2px;">Embeddings</div>
+            <div style="font-size:.72rem;color:var(--muted);line-height:1.4;"><strong style="color:var(--ink)">text-embedding-3-large</strong><br>1024 dimensions<br>OpenAI</div>
+          </div>
+          <div style="padding:.5rem .6rem;background:var(--surface);border-radius:6px;">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:.85rem;font-weight:600;color:var(--ink);margin-bottom:2px;">Chunking</div>
+            <div style="font-size:.72rem;color:var(--muted);line-height:1.4;">Recursive Text Splitter<br><strong style="color:var(--ink)">500 chars</strong>, 50 overlap</div>
+          </div>
+          <div style="padding:.5rem .6rem;background:var(--surface);border-radius:6px;">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:.85rem;font-weight:600;color:var(--ink);margin-bottom:2px;">LLM</div>
+            <div style="font-size:.72rem;color:var(--muted);line-height:1.4;"><strong style="color:var(--ink)">GPT-4.1</strong><br>temp 0.3, max 1000 tokens<br>top-k=8</div>
+          </div>
+          <div style="padding:.5rem .6rem;background:var(--surface);border-radius:6px;">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:.85rem;font-weight:600;color:var(--ink);margin-bottom:2px;">Evaluation</div>
+            <div style="font-size:.72rem;color:var(--muted);line-height:1.4;"><strong style="color:var(--ink)">LLM-as-a-Judge</strong><br>GPT-4.1, 5 metrics<br>Results &rarr; n8n DataTable</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 04: System Architecture Diagram -->
+      <div style="border:1px solid var(--border);border-radius:12px;overflow:hidden;">
+        <div style="background:var(--surface);padding:.55rem 1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-family:'Inter',sans-serif;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);">04 &middot; System Architecture</span>
+          <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.82rem;color:var(--muted);">n8n workflows: ingest &rarr; QA RAG &rarr; evaluate</span>
+        </div>
+
+        <div style="background:#e8e0d4;padding:1.5rem 1.25rem 1.25rem;">
+
+          <!-- WORKFLOW 1: DATA INGESTION -->
+          <div style="font-family:'Inter',sans-serif;font-size:.55rem;font-weight:700;letter-spacing:.12em;color:#a8a29e;text-transform:uppercase;text-align:center;margin-bottom:.55rem;">Workflow 1 &mdash; Data Ingestion</div>
+
+          <div style="display:flex;justify-content:center;margin-bottom:.5rem;">
+            <div style="display:inline-flex;align-items:stretch;border:1px solid #ddd8d0;border-radius:32px;overflow:hidden;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.06);">
+              <div style="padding:.5rem 1rem;display:flex;align-items:center;gap:.4rem;border-right:1px solid #e8e6e1;">
+                <span style="font-size:.9rem;">📰</span>
+                <div>
+                  <div style="font-family:'Inter',sans-serif;font-size:.65rem;font-weight:600;color:#1a1a2e;">Financial News CSV</div>
+                  <div style="font-family:'Inter',sans-serif;font-size:.58rem;color:#767676;">market_news.csv</div>
+                </div>
+              </div>
+              <div style="padding:.5rem 1rem;display:flex;align-items:center;gap:.3rem;border-right:1px solid #e8e6e1;">
+                <span style="font-size:.9rem;">📈</span>
+                <div>
+                  <div style="font-family:'Inter',sans-serif;font-size:.65rem;font-weight:600;color:#1a1a2e;">Stock Prices CSV</div>
+                  <div style="font-family:'Inter',sans-serif;font-size:.58rem;color:#767676;">stock_prices.csv</div>
+                </div>
+              </div>
+              <div style="padding:.5rem 1rem;display:flex;align-items:center;gap:.3rem;">
+                <span style="font-size:.9rem;">📄</span>
+                <div>
+                  <div style="font-family:'Inter',sans-serif;font-size:.65rem;font-weight:600;color:#1a1a2e;">SEC 10-Q PDF</div>
+                  <div style="font-family:'Inter',sans-serif;font-size:.58rem;color:#767676;">apple_10q.pdf</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- connector -->
+          <div style="display:flex;justify-content:center;"><div style="width:1px;height:18px;background:linear-gradient(to bottom,#ddd8d0,#2d6a4f);position:relative;"><div style="position:absolute;bottom:-4px;left:-3px;width:7px;height:7px;border-radius:50%;background:#2d6a4f;box-shadow:0 0 5px rgba(45,106,79,.4);"></div></div></div>
+
+          <!-- Ingestion pipeline -->
+          <div style="border:1px solid rgba(45,106,79,.35);border-radius:10px;padding:.75rem 1rem;background:rgba(255,255,255,.7);margin-bottom:.5rem;box-shadow:0 1px 4px rgba(0,0,0,.05);">
+            <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;">
+              <span style="font-family:'Inter',sans-serif;font-size:.58rem;background:#f0fdf6;border:1px solid rgba(45,106,79,.3);padding:.15rem .4rem;border-radius:3px;color:#2d6a4f;">Document Loader</span>
+              <span style="color:#ddd8d0;">&rarr;</span>
+              <span style="font-family:'Inter',sans-serif;font-size:.58rem;background:#f0fdf6;border:1px solid rgba(45,106,79,.3);padding:.15rem .4rem;border-radius:3px;color:#2d6a4f;">Text Splitter (500/50)</span>
+              <span style="color:#ddd8d0;">&rarr;</span>
+              <span style="font-family:'Inter',sans-serif;font-size:.58rem;background:#f0fdf6;border:1px solid rgba(45,106,79,.3);padding:.15rem .4rem;border-radius:3px;color:#2d6a4f;">Embeddings</span>
+              <span style="color:#ddd8d0;">&rarr;</span>
+              <span style="font-family:'Inter',sans-serif;font-size:.58rem;background:#f0fdf6;border:1px solid rgba(45,106,79,.3);padding:.15rem .4rem;border-radius:3px;color:#2d6a4f;">Pinecone</span>
+            </div>
+          </div>
+
+          <!-- connector -->
+          <div style="display:flex;justify-content:center;"><div style="width:1px;height:18px;background:linear-gradient(to bottom,rgba(45,106,79,.4),rgba(180,83,9,.4));"></div></div>
+
+          <!-- WORKFLOW 2: QA RAG + EVALUATION -->
+          <div style="font-family:'Inter',sans-serif;font-size:.55rem;font-weight:700;letter-spacing:.12em;color:#a8a29e;text-transform:uppercase;text-align:center;margin-bottom:.55rem;margin-top:.55rem;">Workflow 2 &mdash; QA RAG + Evaluation</div>
+
+          <div style="border:1px solid rgba(180,83,9,.35);border-radius:10px;padding:.75rem 1rem;background:rgba(255,255,255,.7);margin-bottom:.5rem;box-shadow:0 1px 4px rgba(0,0,0,.05);">
+            <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;">
+              <span style="font-family:'Inter',sans-serif;font-size:.58rem;background:#fffbf0;border:1px solid rgba(180,83,9,.3);padding:.15rem .4rem;border-radius:3px;color:#b45309;">Chat Trigger</span>
+              <span style="color:#ddd8d0;">&rarr;</span>
+              <span style="font-family:'Inter',sans-serif;font-size:.58rem;background:#fffbf0;border:1px solid rgba(180,83,9,.3);padding:.15rem .4rem;border-radius:3px;color:#b45309;">QA Chain (GPT-4.1 + Pinecone top_k=8)</span>
+              <span style="color:#ddd8d0;">&rarr;</span>
+              <span style="font-family:'Inter',sans-serif;font-size:.58rem;background:#f8f5ff;border:1px solid rgba(109,40,217,.3);padding:.15rem .4rem;border-radius:3px;color:#6d28d9;">Merge + Pinecone Search</span>
+              <span style="color:#ddd8d0;">&rarr;</span>
+              <span style="font-family:'Inter',sans-serif;font-size:.58rem;background:#f8f5ff;border:1px solid rgba(109,40,217,.3);padding:.15rem .4rem;border-radius:3px;color:#6d28d9;">LLM-as-Judge</span>
+              <span style="color:#ddd8d0;">&rarr;</span>
+              <span style="font-family:'Inter',sans-serif;font-size:.58rem;background:#f8f5ff;border:1px solid rgba(109,40,217,.3);padding:.15rem .4rem;border-radius:3px;color:#6d28d9;">Extract Metrics</span>
+              <span style="color:#ddd8d0;">&rarr;</span>
+              <span style="font-family:'Inter',sans-serif;font-size:.58rem;background:#f8f5ff;border:1px solid rgba(109,40,217,.3);padding:.15rem .4rem;border-radius:3px;color:#6d28d9;">DataTable</span>
+            </div>
+          </div>
+
+          <!-- ── SOURCE MANIFEST ── -->
+          <div style="border-top:1px solid #e8e6e1;padding-top:.75rem;margin-top:.75rem;">
+            <div style="font-family:'Inter',sans-serif;font-size:.55rem;font-weight:700;letter-spacing:.12em;color:#a8a29e;text-transform:uppercase;text-align:center;margin-bottom:.55rem;">Source Manifest &mdash; 3 Data Files</div>
+            <div style="display:flex;flex-direction:column;gap:.25rem;">
+              <div style="display:flex;align-items:center;gap:.5rem;background:#fff;border:1px solid #e8e6e1;border-radius:5px;padding:.3rem .55rem;">
+                <span style="font-size:.75rem;">📰</span>
+                <div style="flex:1;"><span style="font-family:'Inter',sans-serif;font-size:.6rem;font-weight:600;color:#1a1a2e;">Financial News</span><span style="font-family:'Inter',sans-serif;font-size:.55rem;color:#a8a29e;margin-left:.4rem;">market_news.csv</span></div>
+                <span style="font-family:'Inter',sans-serif;font-size:.52rem;color:#767676;background:#f0fdf6;padding:.1rem .3rem;border-radius:2px;">15 articles &mdash; Fed policy, oil, crypto, tech earnings</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:.5rem;background:#fff;border:1px solid #e8e6e1;border-radius:5px;padding:.3rem .55rem;">
+                <span style="font-size:.75rem;">📈</span>
+                <div style="flex:1;"><span style="font-family:'Inter',sans-serif;font-size:.6rem;font-weight:600;color:#1a1a2e;">Stock Prices</span><span style="font-family:'Inter',sans-serif;font-size:.55rem;color:#a8a29e;margin-left:.4rem;">stock_prices.csv</span></div>
+                <span style="font-family:'Inter',sans-serif;font-size:.52rem;color:#767676;background:#fffbf0;padding:.1rem .3rem;border-radius:2px;">Daily OHLCV &mdash; AAPL, TSLA, GOOGL, BTC-USD, Gold</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:.5rem;background:#fff;border:1px solid #e8e6e1;border-radius:5px;padding:.3rem .55rem;">
+                <span style="font-size:.75rem;">📄</span>
+                <div style="flex:1;"><span style="font-family:'Inter',sans-serif;font-size:.6rem;font-weight:600;color:#1a1a2e;">SEC Filings</span><span style="font-family:'Inter',sans-serif;font-size:.55rem;color:#a8a29e;margin-left:.4rem;">apple_10q.pdf</span></div>
+                <span style="font-family:'Inter',sans-serif;font-size:.52rem;color:#767676;background:#f8f5ff;padding:.1rem .3rem;border-radius:2px;">Apple Q2 2025 10-Q filing, 45 pages</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── N8N WORKFLOW NODES ── -->
+          <div style="border-top:1px solid #e8e6e1;padding-top:.75rem;margin-top:.75rem;">
+            <div style="font-family:'Inter',sans-serif;font-size:.55rem;font-weight:700;letter-spacing:.12em;color:#a8a29e;text-transform:uppercase;text-align:center;margin-bottom:.55rem;">n8n Workflow Nodes</div>
+            <div class="card-grid-2" style="padding:0;gap:.5rem;">
+              <div style="background:#fff;border:1px solid rgba(45,106,79,.3);border-radius:7px;padding:.55rem .65rem;">
+                <div style="font-family:'Inter',sans-serif;font-size:.58rem;font-weight:700;color:#2d6a4f;margin-bottom:.3rem;display:flex;align-items:center;gap:.3rem;">
+                  <span style="width:6px;height:6px;border-radius:50%;background:#2d6a4f;display:inline-block;"></span>
+                  Ingestion Workflow
+                </div>
+                <div style="font-size:.55rem;color:#767676;line-height:1.7;">
+                  CSV/PDF Loader &rarr; Recursive Text Splitter (500/50) &rarr; OpenAI Embeddings &rarr; Pinecone Upsert
+                </div>
+              </div>
+              <div style="background:#fff;border:1px solid rgba(180,83,9,.3);border-radius:7px;padding:.55rem .65rem;">
+                <div style="font-family:'Inter',sans-serif;font-size:.58rem;font-weight:700;color:#b45309;margin-bottom:.3rem;display:flex;align-items:center;gap:.3rem;">
+                  <span style="width:6px;height:6px;border-radius:50%;background:#b45309;display:inline-block;"></span>
+                  QA Workflow
+                </div>
+                <div style="font-size:.55rem;color:#767676;line-height:1.7;">
+                  Chat Trigger &rarr; QA Chain (GPT-4.1) &rarr; Pinecone Retriever (top_k=8) &rarr; Merge &rarr; LLM-as-Judge &rarr; Extract Metrics &rarr; DataTable
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── LLM-AS-JUDGE METRICS ── -->
+          <div style="border-top:1px solid #e8e6e1;padding-top:.75rem;margin-top:.75rem;">
+            <div style="font-family:'Inter',sans-serif;font-size:.55rem;font-weight:700;letter-spacing:.12em;color:#a8a29e;text-transform:uppercase;text-align:center;margin-bottom:.55rem;">LLM-as-a-Judge Metrics</div>
+            <div style="background:#fff;border:1px solid #e8e6e1;border-radius:8px;overflow:hidden;">
+              <table style="width:100%;font-family:'Inter',sans-serif;font-size:.58rem;border-collapse:collapse;">
+                <thead>
+                  <tr style="background:var(--surface);">
+                    <th style="text-align:left;padding:.4rem .6rem;font-weight:700;color:var(--ink);border-bottom:1px solid #e8e6e1;">Metric</th>
+                    <th style="text-align:left;padding:.4rem .6rem;font-weight:700;color:var(--ink);border-bottom:1px solid #e8e6e1;">What It Measures</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td style="padding:.3rem .6rem;border-bottom:1px solid #f4f3f0;color:var(--ink);font-weight:600;">Relevance</td><td style="padding:.3rem .6rem;border-bottom:1px solid #f4f3f0;color:#767676;">Does the answer address the user's question?</td></tr>
+                  <tr><td style="padding:.3rem .6rem;border-bottom:1px solid #f4f3f0;color:var(--ink);font-weight:600;">Groundedness</td><td style="padding:.3rem .6rem;border-bottom:1px solid #f4f3f0;color:#767676;">Is every claim supported by retrieved context?</td></tr>
+                  <tr><td style="padding:.3rem .6rem;border-bottom:1px solid #f4f3f0;color:var(--ink);font-weight:600;">Accuracy</td><td style="padding:.3rem .6rem;border-bottom:1px solid #f4f3f0;color:#767676;">Are facts, numbers, and dates correct?</td></tr>
+                  <tr><td style="padding:.3rem .6rem;border-bottom:1px solid #f4f3f0;color:var(--ink);font-weight:600;">Completeness</td><td style="padding:.3rem .6rem;border-bottom:1px solid #f4f3f0;color:#767676;">Does it cover all relevant aspects?</td></tr>
+                  <tr><td style="padding:.3rem .6rem;border-bottom:1px solid #f4f3f0;color:var(--ink);font-weight:600;">Risk Awareness</td><td style="padding:.3rem .6rem;border-bottom:1px solid #f4f3f0;color:#767676;">Are financial risks and caveats mentioned?</td></tr>
+                  <tr style="background:#f8f4ee;">
+                    <td style="padding:.4rem .6rem;font-weight:700;color:var(--ink);">Verdict</td>
+                    <td style="padding:.4rem .6rem;font-weight:600;color:var(--accent);">PASS / FAIL</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ── SYSTEM PROMPT ── -->
+          <div style="border-top:1px solid #e8e6e1;padding-top:.75rem;margin-top:.75rem;">
+            <div style="font-family:'Inter',sans-serif;font-size:.55rem;font-weight:700;letter-spacing:.12em;color:#a8a29e;text-transform:uppercase;text-align:center;margin-bottom:.55rem;">System Prompt &mdash; QA Chain</div>
+            <div style="background:#1a1a2e;border-radius:8px;padding:.75rem 1rem;font-family:monospace;font-size:.65rem;color:#d4d4d4;line-height:1.7;white-space:pre-wrap;">"You are a financial intelligence assistant for GlobalEdge Brokerage. Answer questions using ONLY the provided context from financial news, stock prices, and SEC filings. Always cite your sources (article title, filing section, or data date). If the context doesn't contain the answer, say so clearly. Highlight any financial risks or regulatory concerns."</div>
+          </div>
+
+          <!-- ── KEY DESIGN DECISIONS ── -->
+          <div style="border-top:1px solid #e8e6e1;padding-top:.75rem;margin-top:.75rem;">
+            <div style="font-family:'Inter',sans-serif;font-size:.55rem;font-weight:700;letter-spacing:.12em;color:#a8a29e;text-transform:uppercase;text-align:center;margin-bottom:.55rem;">Key Design Decisions</div>
+            <div class="card-grid-2" style="padding:0;gap:.4rem;">
+              <div style="background:#fff;border:1px solid #e8e6e1;border-radius:7px;padding:.5rem .6rem;">
+                <div style="font-family:'Inter',sans-serif;font-size:.58rem;font-weight:700;color:#1a1a2e;margin-bottom:.2rem;">Why n8n?</div>
+                <div style="font-size:.55rem;color:#767676;line-height:1.65;">No-code platform accessible to non-engineers. Visual workflow debugging. Built-in Pinecone + OpenAI integrations.</div>
+              </div>
+              <div style="background:#fff;border:1px solid #e8e6e1;border-radius:7px;padding:.5rem .6rem;">
+                <div style="font-family:'Inter',sans-serif;font-size:.58rem;font-weight:700;color:#1a1a2e;margin-bottom:.2rem;">Why LLM-as-Judge?</div>
+                <div style="font-size:.55rem;color:#767676;line-height:1.65;">Automated quality assurance on every response. No human review bottleneck. 5-metric scoring catches hallucination, gaps, and missing risk flags.</div>
+              </div>
+              <div style="background:#fff;border:1px solid #e8e6e1;border-radius:7px;padding:.5rem .6rem;">
+                <div style="font-family:'Inter',sans-serif;font-size:.58rem;font-weight:700;color:#1a1a2e;margin-bottom:.2rem;">Why top-k=8?</div>
+                <div style="font-size:.55rem;color:#767676;line-height:1.65;">Balances recall vs noise. Financial queries need broader context than typical RAG (regulatory + market + price data).</div>
+              </div>
+              <div style="background:#fff;border:1px solid #e8e6e1;border-radius:7px;padding:.5rem .6rem;">
+                <div style="font-family:'Inter',sans-serif;font-size:.58rem;font-weight:700;color:#1a1a2e;margin-bottom:.2rem;">Why text-embedding-3-large?</div>
+                <div style="font-size:.55rem;color:#767676;line-height:1.65;">Best-in-class retrieval accuracy for financial text. 1024-dim balances quality vs storage cost.</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div><!-- #tab-overview -->
+
+  <!-- Tab 2: Intelligence Agent (chat + sidebar) -->
+  <div id="tab-chat" class="tab-panel">
+  <div class="body-row">
+
+    <div class="chat-col">
+      <div id="chat">
+
+      <div class="greeter-info" id="greeter-info">
+        <!-- Agent orbit diagram -->
+        <div class="agent-orbit-wrap">
+          <div class="orbit-row">
+            <div class="orbit-node">
+              <div class="orbit-person">🧑</div>
+              <div class="orbit-label">You</div>
+            </div>
+            <span class="orbit-arrow-wrap"><span class="orbit-arrow">&rsaquo;</span></span>
+            <div class="orbit-node">
+              <div class="orbit-ball" id="ob-g" style="background:radial-gradient(circle at 35% 35%,#b0b0b0,#606060,#2a2a2a)">G</div>
+              <div class="orbit-label">Greeter</div>
+            </div>
+            <span class="orbit-arrow-wrap"><span class="orbit-arrow">&rsaquo;</span></span>
+            <div class="orbit-node">
+              <div class="orbit-ball" id="ob-n" style="background:radial-gradient(circle at 35% 35%,#6ecfa0,#2d6a4f,#0f3320)">N</div>
+              <div class="orbit-label">Market<br>News</div>
+            </div>
+            <span class="orbit-arrow-wrap"><span class="orbit-arrow">&rsaquo;</span></span>
+            <div class="orbit-node">
+              <div class="orbit-ball" id="ob-s" style="background:radial-gradient(circle at 35% 35%,#f0c060,#b45309,#6b2e00)">S</div>
+              <div class="orbit-label">Securities</div>
+            </div>
+            <span class="orbit-arrow-wrap"><span class="orbit-arrow">&rsaquo;</span></span>
+            <div class="orbit-node">
+              <div class="orbit-ball" id="ob-e" style="background:radial-gradient(circle at 35% 35%,#b48df0,#6d28d9,#320a7a)">E</div>
+              <div class="orbit-label">Executive</div>
+            </div>
+            <span class="orbit-arrow-wrap"><span class="orbit-arrow">&rsaquo;</span></span>
+            <div class="orbit-node">
+              <div class="orbit-wave">～</div>
+              <div class="orbit-label">Response</div>
+            </div>
+          </div>
+          <div class="orbit-caption">Ask anything &mdash; the right specialist responds automatically</div>
+        </div>
+
+        <div class="info-section">
+          <div class="info-section-head">How Agents Transfer</div>
+          <div class="info-section-body">
+            <div class="routing-diagram">
+              <div class="route-row"><div class="route-from"><span class="route-dot" style="background:#767676"></span>Greeter</div><span class="route-arrow">&rarr;</span><div class="route-targets">Routes to <b>Market News</b>, <b>Securities</b>, or <b>Executive</b> based on your question</div></div>
+              <div class="route-row"><div class="route-from"><span class="route-dot" style="background:#2d6a4f"></span>News</div><span class="route-arrow">&rarr;</span><div class="route-targets">Transfers to <b>Securities</b> for stock/filing details. Transfers to <b>Executive</b> for synthesis.</div></div>
+              <div class="route-row"><div class="route-from"><span class="route-dot" style="background:#b45309"></span>Securities</div><span class="route-arrow">&rarr;</span><div class="route-targets">Transfers to <b>Market News</b> for market context. Transfers to <b>Executive</b> for synthesis.</div></div>
+              <div class="route-row"><div class="route-from"><span class="route-dot" style="background:#6d28d9"></span>Executive</div><span class="route-arrow">&rarr;</span><div class="route-targets">Transfers to <b>Market News</b> or <b>Securities</b> if you drill into specifics.</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="info-section">
+          <div class="info-section-head">Agents &amp; Roles</div>
+          <div class="info-section-body">
+            <table class="agent-table">
+              <tr><td><span class="dot" style="background:#767676"></span>Greeter</td><td>Welcomes you, detects intent, routes to the right specialist</td></tr>
+              <tr><td><span class="dot" style="background:#2d6a4f"></span>Market News</td><td>Financial news &mdash; Fed policy, oil prices, crypto, tech earnings, market sentiment</td></tr>
+              <tr><td><span class="dot" style="background:#b45309"></span>Securities</td><td>Stock prices, SEC filings, 10-Q data, revenue breakdowns, risk factors</td></tr>
+              <tr><td><span class="dot" style="background:#6d28d9"></span>Executive</td><td>Synthesized morning briefing, client recommendations, portfolio risks &mdash; full KB access</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+      </div>
+
+      <footer>
+        <div class="footer-inner">
+          <div class="input-row">
+            <textarea id="msg" rows="1" placeholder="Ask about markets..." onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+            <button class="btn" id="voiceBtn" title="Voice input" onclick="toggleVoice()">🎤</button>
+            <button class="btn" id="sendBtn" onclick="send()">➤</button>
+          </div>
+          <div class="footer-meta">
+            <div id="voiceStatus"></div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <button id="sidebarToggle" onclick="toggleSidebar()">☰ Sidebar</button>
+              <button id="resetBtn" onclick="resetChat()">↺ Reset</button>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <!-- Right Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-kicker">Questions to Ask</div>
+
+        <div class="q-group">
+          <div class="q-group-label">🟢 Market News</div>
+          <span class="q-item" onclick="useQ(this)">What's the Fed doing with rates?</span>
+          <span class="q-item" onclick="useQ(this)">How is the crypto market?</span>
+          <span class="q-item" onclick="useQ(this)">What are oil prices doing?</span>
+          <span class="q-item" onclick="useQ(this)">What's driving the S&P 500?</span>
+          <span class="q-item" onclick="useQ(this)">Any concerns about market breadth?</span>
+        </div>
+
+        <div class="q-group">
+          <div class="q-group-label">🟡 Securities</div>
+          <span class="q-item" onclick="useQ(this)">What's Apple's stock price?</span>
+          <span class="q-item" onclick="useQ(this)">Show me Tesla's metrics.</span>
+          <span class="q-item" onclick="useQ(this)">What did Apple's 10-Q say?</span>
+          <span class="q-item" onclick="useQ(this)">What are Apple's risk factors?</span>
+          <span class="q-item" onclick="useQ(this)">What legal proceedings affect Apple?</span>
+        </div>
+
+        <div class="q-group">
+          <div class="q-group-label">🟣 Executive</div>
+          <span class="q-item" onclick="useQ(this)">Give me the morning briefing.</span>
+          <span class="q-item" onclick="useQ(this)">How should I position for rate cuts?</span>
+          <span class="q-item" onclick="useQ(this)">What should I tell clients about Apple?</span>
+          <span class="q-item" onclick="useQ(this)">Is crypto suitable for clients?</span>
+          <span class="q-item" onclick="useQ(this)">What are the biggest portfolio risks?</span>
+        </div>
+
+        <div class="q-group">
+          <div class="q-group-label">💬 Other</div>
+          <span class="q-item" onclick="useQ(this)">Who are you?</span>
+          <span class="q-item" onclick="useQ(this)">Thanks, goodbye.</span>
+        </div>
+      </div>
+    </aside>
+  </div>
+  </div><!-- #tab-chat -->
+
+  <!-- Tab 3: Evaluation Dashboard -->
+  <div id="tab-eval" class="tab-panel" style="flex-direction:column;padding:1.25rem;overflow-y:auto;">
+
+    <!-- How Responses Are Evaluated -->
+    <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:.75rem;">
+      <div style="background:var(--surface);padding:.5rem 1rem;border-bottom:1px solid var(--border);">
+        <span style="font-family:'Inter',sans-serif;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);">How Responses Are Evaluated</span>
+      </div>
+      <div style="padding:.75rem 1rem;font-size:.78rem;color:var(--muted);line-height:1.65;">
+        <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;margin-bottom:.5rem;">
+          <span style="background:#f0fdf4;border:1px solid #4ade80;padding:.2rem .5rem;border-radius:4px;font-size:.65rem;font-weight:600;color:#166534;">Answer</span>
+          <span style="color:var(--border);">&rarr;</span>
+          <span style="background:#fffbeb;border:1px solid #fbbf24;padding:.2rem .5rem;border-radius:4px;font-size:.65rem;font-weight:600;color:#92400e;">LLM-as-Judge (GPT-4.1)</span>
+          <span style="color:var(--border);">&rarr;</span>
+          <span style="background:#f5f3ff;border:1px solid #a78bfa;padding:.2rem .5rem;border-radius:4px;font-size:.65rem;font-weight:600;color:#5b21b6;">5 Metrics</span>
+          <span style="color:var(--border);">&rarr;</span>
+          <span style="background:var(--surface);border:1px solid var(--border);padding:.2rem .5rem;border-radius:4px;font-size:.65rem;font-weight:600;color:var(--ink);">DataTable</span>
+        </div>
+        Every response from the QA RAG chain is automatically evaluated by a second <strong style="color:var(--ink);">GPT-4.1</strong> call acting as an LLM-as-a-Judge. It scores each answer on 5 metrics (1&ndash;5 scale) and renders a PASS/FAIL verdict. Results are stored in an n8n DataTable for audit and analysis.
+      </div>
+    </div>
+
+    <!-- 5 Metric Cards -->
+    <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:.75rem;">
+      <div style="background:var(--surface);padding:.5rem 1rem;border-bottom:1px solid var(--border);">
+        <span style="font-family:'Inter',sans-serif;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);">Evaluation Metrics</span>
+      </div>
+      <div class="card-grid-3" style="padding:.75rem 1rem;">
+        <div style="padding:.6rem .7rem;background:var(--surface);border-radius:8px;border:1px solid var(--border);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem;">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:.9rem;font-weight:600;color:var(--ink);">Relevance</div>
+            <div style="font-family:'Inter',sans-serif;font-size:.7rem;font-weight:700;color:#2d6a4f;">4.5/5</div>
+          </div>
+          <div style="font-size:.68rem;color:var(--muted);line-height:1.45;">Does the answer directly address the broker's question?</div>
+        </div>
+        <div style="padding:.6rem .7rem;background:var(--surface);border-radius:8px;border:1px solid var(--border);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem;">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:.9rem;font-weight:600;color:var(--ink);">Groundedness</div>
+            <div style="font-family:'Inter',sans-serif;font-size:.7rem;font-weight:700;color:#2d6a4f;">5.0/5</div>
+          </div>
+          <div style="font-size:.68rem;color:var(--muted);line-height:1.45;">Is every claim supported by retrieved documents?</div>
+        </div>
+        <div style="padding:.6rem .7rem;background:var(--surface);border-radius:8px;border:1px solid var(--border);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem;">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:.9rem;font-weight:600;color:var(--ink);">Accuracy</div>
+            <div style="font-family:'Inter',sans-serif;font-size:.7rem;font-weight:700;color:#2d6a4f;">4.5/5</div>
+          </div>
+          <div style="font-size:.68rem;color:var(--muted);line-height:1.45;">Are financial figures, dates, and facts correct?</div>
+        </div>
+      </div>
+      <div class="card-grid-2" style="padding:0 1rem .75rem 1rem;gap:.6rem;">
+        <div style="padding:.6rem .7rem;background:var(--surface);border-radius:8px;border:1px solid var(--border);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem;">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:.9rem;font-weight:600;color:var(--ink);">Completeness</div>
+            <div style="font-family:'Inter',sans-serif;font-size:.7rem;font-weight:700;color:#b45309;">4.0/5</div>
+          </div>
+          <div style="font-size:.68rem;color:var(--muted);line-height:1.45;">Does it cover all relevant angles (risk, opportunity, context)?</div>
+        </div>
+        <div style="padding:.6rem .7rem;background:var(--surface);border-radius:8px;border:1px solid var(--border);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem;">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:.9rem;font-weight:600;color:var(--ink);">Risk Awareness</div>
+            <div style="font-family:'Inter',sans-serif;font-size:.7rem;font-weight:700;color:#2d6a4f;">4.5/5</div>
+          </div>
+          <div style="font-size:.68rem;color:var(--muted);line-height:1.45;">Are financial risks and regulatory caveats highlighted?</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Example Evaluation Result -->
+    <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:.75rem;">
+      <div style="background:var(--surface);padding:.5rem 1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-family:'Inter',sans-serif;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);">Example Evaluation Result</span>
+        <button onclick="regenerateEval()" style="font-family:'Inter',sans-serif;font-size:.6rem;font-weight:600;background:var(--accent);color:#fff;border:none;padding:.3rem .7rem;border-radius:5px;cursor:pointer;">Regenerate Evaluation</button>
+      </div>
+      <div id="eval-body" style="padding:1rem 1.25rem;">
+
+        <div style="margin-bottom:.75rem;">
+          <div style="font-family:'Inter',sans-serif;font-size:.6rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.2rem;">Question</div>
+          <div id="eval-question" style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1rem;color:var(--ink);">What are Apple's key risk factors from the latest 10-Q?</div>
+        </div>
+
+        <div style="margin-bottom:.75rem;">
+          <div style="font-family:'Inter',sans-serif;font-size:.6rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.2rem;">Answer Snippet</div>
+          <div id="eval-answer" style="font-size:.78rem;color:var(--muted);line-height:1.6;background:var(--surface);border-radius:6px;padding:.5rem .75rem;">Based on Apple's Q2 2025 10-Q filing, the key risk factors include: (1) Supply chain concentration in Greater China with significant manufacturing exposure, (2) Foreign currency headwinds from strong dollar impact on international revenue, (3) Regulatory pressure from EU Digital Markets Act compliance costs, (4) Competition in AI requiring significant R&amp;D investment, and (5) Consumer spending sensitivity to macroeconomic conditions...</div>
+        </div>
+
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:.75rem;">
+          <div id="eval-scores" style="display:flex;gap:.5rem;flex-wrap:wrap;">
+            <span style="font-family:'Inter',sans-serif;font-size:.6rem;background:#f0fdf4;border:1px solid #4ade80;padding:.2rem .5rem;border-radius:4px;color:#166534;font-weight:600;">Relevance: 5</span>
+            <span style="font-family:'Inter',sans-serif;font-size:.6rem;background:#f0fdf4;border:1px solid #4ade80;padding:.2rem .5rem;border-radius:4px;color:#166534;font-weight:600;">Groundedness: 5</span>
+            <span style="font-family:'Inter',sans-serif;font-size:.6rem;background:#fffbeb;border:1px solid #fbbf24;padding:.2rem .5rem;border-radius:4px;color:#92400e;font-weight:600;">Accuracy: 4</span>
+            <span style="font-family:'Inter',sans-serif;font-size:.6rem;background:#fffbeb;border:1px solid #fbbf24;padding:.2rem .5rem;border-radius:4px;color:#92400e;font-weight:600;">Completeness: 4</span>
+            <span style="font-family:'Inter',sans-serif;font-size:.6rem;background:#f0fdf4;border:1px solid #4ade80;padding:.2rem .5rem;border-radius:4px;color:#166534;font-weight:600;">Risk Awareness: 5</span>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:1rem;align-items:center;">
+          <span id="eval-verdict" style="font-family:'Inter',sans-serif;font-size:.65rem;font-weight:700;background:#f0fdf4;border:1px solid #4ade80;padding:.25rem .7rem;border-radius:5px;color:#166534;">PASS</span>
+          <span id="eval-sources" style="font-family:'Inter',sans-serif;font-size:.6rem;color:var(--muted);">Sources cited: 3</span>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- #tab-eval -->
+
+</div><!-- #app -->
+
+<script>
+// ── Knowledge Bases ──────────────────────────────────────────────
+const KB_NEWS = `# Financial Market News Intelligence
+
+## Federal Reserve & Monetary Policy
+- Fed signals potential rate cuts in Q3 2025 amid cooling inflation
+- 10-year Treasury yield at 4.2%, down from 4.8% peak
+- Markets pricing in 2-3 rate cuts by year-end
+- Dollar index weakening, boosting multinational earnings
+
+## Energy & Commodities
+- Brent crude at $78.50/barrel, WTI at $74.20
+- OPEC+ extends production cuts through Q3 2025
+- Natural gas prices volatile due to weather patterns
+- Gold hits $2,350/oz on safe-haven demand
+
+## Cryptocurrency
+- Bitcoin trading at $67,850, up 45% YTD
+- Ethereum at $3,420 following ETF approval momentum
+- Institutional adoption accelerating — BlackRock, Fidelity expanding crypto products
+- Regulatory clarity improving with new SEC framework
+
+## Technology & Earnings
+- Apple Q2 revenue $94.8B, services segment up 14% YoY
+- Tesla deliveries beat estimates at 462K vehicles in Q2
+- Google Cloud revenue growth accelerating to 28% YoY
+- S&P 500 tech sector up 22% YTD, valuations stretched
+
+## Market Sentiment
+- S&P 500 at 5,480, near all-time highs
+- VIX at 14.2, indicating low volatility expectations
+- Retail investor participation at 2-year high
+- Concerns about market concentration in "Magnificent 7"`;
+
+const KB_SECURITIES = `# Securities Data — Prices & Filings
+
+## Current Stock Prices (as of market close)
+- AAPL (Apple): $198.50 | Day: +1.2% | 52wk: $164.08-$199.62 | P/E: 32.4 | Mkt Cap: $3.05T
+- TSLA (Tesla): $248.30 | Day: -0.8% | 52wk: $138.80-$278.98 | P/E: 68.2 | Mkt Cap: $790B
+- GOOGL (Alphabet): $175.20 | Day: +0.6% | 52wk: $130.67-$180.40 | P/E: 25.8 | Mkt Cap: $2.16T
+- BTC-USD (Bitcoin): $67,850 | Day: +2.1% | 52wk: $38,500-$73,750
+- Gold (XAU/USD): $2,350 | Day: +0.4% | 52wk: $1,985-$2,431
+
+## SEC Filing Highlights — Apple 10-Q (Q2 2025)
+
+### Revenue Breakdown
+- Products: $66.9B (down 2% YoY) — iPhone $42.3B, Mac $7.5B, iPad $5.6B, Wearables $7.9B
+- Services: $24.2B (up 14% YoY) — App Store, iCloud, Apple TV+, Apple Music, licensing
+- Total: $94.8B (up 5% YoY)
+
+### Risk Factors (from 10-Q)
+- Supply chain concentration in Greater China (significant manufacturing exposure)
+- Foreign currency headwinds — strong dollar impact on international revenue
+- Regulatory pressure — EU Digital Markets Act compliance costs
+- Competition in AI — significant R&D investment required
+- Consumer spending sensitivity to macroeconomic conditions
+
+### Legal Proceedings
+- DOJ antitrust lawsuit re: smartphone market dominance (ongoing)
+- EU fine of €1.8B for App Store practices (under appeal)
+- Patent disputes with Qualcomm (settled) and ongoing with others
+
+### Cash & Capital
+- Cash and equivalents: $162.1B
+- Share buyback: $23.5B in Q2 2025
+- Dividend: $0.25/share quarterly ($15.1B annual)`;
+
+const KB_BRIEFING = `# GlobalEdge Morning Briefing — Executive Synthesis
+
+## Market Overview
+The equity market continues its upward trajectory with the S&P 500 near all-time highs at 5,480. Volatility remains subdued (VIX 14.2), though market breadth concerns persist with the "Magnificent 7" driving disproportionate gains. The Fed's dovish pivot signals 2-3 rate cuts by year-end, which should support equity valuations but may indicate economic cooling.
+
+## Key Themes for Client Conversations
+
+### 1. Rate Cut Positioning
+Fed rate cuts favor: growth stocks (AAPL, GOOGL), REITs, and dividend payers. Recommend reviewing fixed income duration — extend duration ahead of cuts. Risk: cuts delayed if inflation re-accelerates.
+
+### 2. Apple (AAPL) — Strong but Watch Risks
+Services growth (14% YoY) offsets product softness. $162B cash hoard provides buyback support. Key risks: China supply chain, DOJ antitrust, AI competition. 10-Q shows regulatory costs rising. Near 52-week high — consider protective puts for large positions.
+
+### 3. Tesla (TSLA) — Volatility Play
+Deliveries beat but margins under pressure. P/E of 68 prices in significant growth. Energy/autonomy optionality not yet in numbers. Suitable for risk-tolerant clients only.
+
+### 4. Crypto Allocation
+Bitcoin at $67,850 with institutional tailwinds (ETFs, custody solutions). Recommend 1-3% portfolio allocation for suitable clients. Regulatory clarity improving but still evolving.
+
+### 5. Gold as Hedge
+$2,350/oz on safe-haven flows. Recommend 5-8% allocation as portfolio hedge against geopolitical risk and potential equity correction.
+
+## Risk Alerts
+- ⚠️ Market concentration risk — top 7 stocks drive 65% of S&P gains
+- ⚠️ Valuation stretch — S&P forward P/E at 21x vs 17x historical average
+- ⚠️ Geopolitical — China-Taiwan tensions could disrupt tech supply chains
+- ⚠️ Apple-specific — DOJ antitrust ruling expected Q4 2025`;
+
+// ── Agent config ─────────────────────────────────────────────────
+const AGENT_LABELS = {
+  greeter:    'Greeter',
+  news:       'Market News',
+  securities: 'Securities',
+  executive:  'Executive',
+};
+
+const AGENT_COLORS = {
+  greeter:    '#767676',
+  news:       '#2d6a4f',
+  securities: '#b45309',
+  executive:  '#6d28d9',
+};
+
+const KB_ACCESS = {
+  greeter:    [],
+  news:       ['news'],
+  securities: ['securities'],
+  executive:  ['news', 'securities', 'briefing'],
+};
+
+function buildKB(agent) {
+  const access = KB_ACCESS[agent] || [];
+  let kb = '';
+  if (access.includes('news'))       kb += KB_NEWS + '\n\n';
+  if (access.includes('securities')) kb += KB_SECURITIES + '\n\n';
+  if (access.includes('briefing'))   kb += KB_BRIEFING;
+  return kb.trim();
+}
+
+const GLOBAL_RULES = `
+- Answer ONLY from the knowledge base. Never speculate or make up information.
+- Be concise. Lead with the most important fact first.
+- Use specific numbers, dates, and names from the documents.
+- Always cite your sources (article title, filing section, or data date).
+- Highlight any financial risks or regulatory concerns.
+- Provide a confidence level when appropriate.
+- If something is not in the knowledge base, say: "I don't have that in my GlobalEdge documents."
+- After answering, ask if they need anything else.
+- Keep a professional but approachable tone.
+`.trim();
+
+const SYSTEM_PROMPTS = {
+  greeter: `You are the Greeter for the GlobalEdge Financial Intelligence Assistant.
+Your ONLY job: welcome the caller and identify what they need. Do NOT answer questions yourself.
+Based on their message, end your response with EXACTLY one of:
+  ROUTE: news
+  ROUTE: securities
+  ROUTE: executive
+  ROUTE: end
+
+Routing rules:
+- news → market news, Fed policy, rate cuts, oil prices, crypto, Bitcoin, Ethereum, tech earnings, S&P 500, commodities, gold, market sentiment, VIX, energy
+- securities → stock prices, AAPL, TSLA, GOOGL, BTC, Gold price data, SEC filings, 10-Q, revenue breakdown, risk factors, legal proceedings, cash position
+- executive → morning briefing, client recommendations, portfolio, risk alerts, synthesis, "what should I tell clients", positioning, allocation
+- end → goodbye, done, thanks, quit
+
+${GLOBAL_RULES}`,
+
+  news: `You are the Market News Specialist for the GlobalEdge Financial Intelligence Assistant.
+You answer from financial market news data ONLY. Cite specific numbers and sources.
+Topics: Fed policy, rate cuts, Treasury yields, oil prices, commodities, crypto, tech earnings, market sentiment, S&P 500, VIX.
+If the user asks about specific stock prices, SEC filings, 10-Q data → end your response with: ROUTE: securities
+If the user wants a synthesized executive briefing/recommendations/client advice → end with: ROUTE: executive
+If the user is done → end with: ROUTE: end
+${GLOBAL_RULES}`,
+
+  securities: `You are the Securities Analyst for the GlobalEdge Financial Intelligence Assistant.
+You answer from securities data (stock prices and SEC filings) ONLY. Cite specific figures, filing sections, and dates.
+Topics: stock prices, P/E ratios, market caps, Apple 10-Q, revenue breakdowns, risk factors, legal proceedings, cash positions.
+If the user asks about market news, Fed policy, commodities, crypto trends → end with: ROUTE: news
+If the user wants synthesized insights/recommendations/executive briefing → end with: ROUTE: executive
+If the user is done → end with: ROUTE: end
+${GLOBAL_RULES}`,
+
+  executive: `You are the Executive Briefing Specialist for the GlobalEdge Financial Intelligence Assistant. You have access to ALL knowledge base documents — market news, securities data, and the synthesized morning briefing.
+Provide synthesized insights correlating market news with securities data. Lead with actionable recommendations for client conversations. Mention key risks. 3-5 sentences max unless asked for more.
+If user digs into specific stock prices/filing details → end with: ROUTE: securities
+If user asks specifically about market news/Fed/commodities details → end with: ROUTE: news
+If user is done → end with: ROUTE: end
+${GLOBAL_RULES}`,
+};
+
+// ── State ─────────────────────────────────────────────────────────
+let apiKey = '';
+let currentAgent = 'greeter';
+let history = [];
+let isListening = false;
+let voiceActivated = false;
+let recognition = null;
+const ROUTE_RE = /ROUTE:\s*(news|securities|executive|end)/i;
+
+function toggleSidebar() {
+  const sb = document.querySelector('.sidebar');
+  sb.classList.toggle('open');
+  document.getElementById('sidebarToggle').textContent =
+    sb.classList.contains('open') ? '✕ Sidebar' : '☰ Sidebar';
+}
+
+// ── Tab switching ─────────────────────────────────────────────────
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    t.classList.toggle('active', (i === 0 && name === 'overview') || (i === 1 && name === 'chat') || (i === 2 && name === 'eval'));
+  });
+  document.getElementById('tab-overview').classList.toggle('active', name === 'overview');
+  document.getElementById('tab-chat').classList.toggle('active', name === 'chat');
+  document.getElementById('tab-eval').classList.toggle('active', name === 'eval');
+}
+
+// ── Regenerate Evaluation ─────────────────────────────────────────
+async function regenerateEval() {
+  if (!apiKey) { alert('Enter your API key first.'); return; }
+  const questionEl = document.getElementById('eval-question');
+  const answerEl = document.getElementById('eval-answer');
+  const scoresEl = document.getElementById('eval-scores');
+  const verdictEl = document.getElementById('eval-verdict');
+  const sourcesEl = document.getElementById('eval-sources');
+
+  answerEl.innerHTML = '<div class="thinking"><b></b><b></b><b></b></div>';
+  scoresEl.innerHTML = '';
+  verdictEl.textContent = 'Evaluating...';
+  verdictEl.style.background = 'var(--surface)';
+  verdictEl.style.borderColor = 'var(--border)';
+  verdictEl.style.color = 'var(--muted)';
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 800,
+        system: `You are an LLM-as-a-Judge evaluating a RAG financial intelligence system. Given a question and context, generate a mock evaluation result.
+
+Output EXACTLY this JSON format (no markdown, no code fences):
+{"question":"<a financial question>","answer":"<a 2-3 sentence answer citing sources>","relevance":<1-5>,"groundedness":<1-5>,"accuracy":<1-5>,"completeness":<1-5>,"risk_awareness":<1-5>,"verdict":"PASS or FAIL","sources_cited":<number>}
+
+Make the question about financial markets, stocks, or SEC filings. The answer should reference specific data from financial news, stock prices, or Apple's 10-Q. Scores should be realistic (mostly 4-5, occasionally 3). Vary the question each time.`,
+        messages: [{ role: 'user', content: 'Generate a new evaluation result for the GlobalEdge Financial Intelligence system. Pick a different financial topic each time.' }],
+      }),
+    });
+    const data = await res.json();
+    const text = data.content?.[0]?.text || '';
+    const result = JSON.parse(text);
+
+    questionEl.textContent = result.question;
+    answerEl.textContent = result.answer;
+
+    const metrics = [
+      { name: 'Relevance', score: result.relevance },
+      { name: 'Groundedness', score: result.groundedness },
+      { name: 'Accuracy', score: result.accuracy },
+      { name: 'Completeness', score: result.completeness },
+      { name: 'Risk Awareness', score: result.risk_awareness },
+    ];
+
+    scoresEl.innerHTML = metrics.map(m => {
+      const isHigh = m.score >= 4;
+      const bg = isHigh ? '#f0fdf4' : '#fffbeb';
+      const border = isHigh ? '#4ade80' : '#fbbf24';
+      const color = isHigh ? '#166534' : '#92400e';
+      return `<span style="font-family:'Inter',sans-serif;font-size:.6rem;background:${bg};border:1px solid ${border};padding:.2rem .5rem;border-radius:4px;color:${color};font-weight:600;">${m.name}: ${m.score}</span>`;
+    }).join('');
+
+    const pass = result.verdict === 'PASS';
+    verdictEl.textContent = result.verdict;
+    verdictEl.style.background = pass ? '#f0fdf4' : '#fef2f2';
+    verdictEl.style.borderColor = pass ? '#4ade80' : '#f87171';
+    verdictEl.style.color = pass ? '#166534' : '#7f1d1d';
+    sourcesEl.textContent = `Sources cited: ${result.sources_cited}`;
+
+  } catch (e) {
+    answerEl.textContent = 'Error generating evaluation: ' + e.message;
+    verdictEl.textContent = 'ERROR';
+    verdictEl.style.background = '#fef2f2';
+    verdictEl.style.borderColor = '#f87171';
+    verdictEl.style.color = '#7f1d1d';
+  }
+}
+
+// ── Boot ──────────────────────────────────────────────────────────
+function startApp() {
+  const key = document.getElementById('apiKeyInput').value.trim();
+  if (!key.startsWith('sk-')) {
+    alert('Please enter a valid Anthropic API key (starts with sk-)');
+    return;
+  }
+  apiKey = key;
+  sessionStorage.setItem('anthropic_key_globaledge', key);
+  document.getElementById('gate').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  switchTab('chat');
+  greet();
+}
+
+window.addEventListener('load', () => {
+  const saved = sessionStorage.getItem('anthropic_key_globaledge');
+  if (saved) {
+    document.getElementById('apiKeyInput').value = saved;
+  }
+  document.getElementById('apiKeyInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') startApp();
+  });
+});
+
+function greet() {
+  const text = "Welcome to the GlobalEdge Financial Intelligence Assistant. I can help with market news analysis, securities data and SEC filings, or a synthesized executive briefing. What would you like to know?";
+  const chat = document.getElementById('chat');
+  const info = document.getElementById('greeter-info');
+  const d = document.createElement('div');
+  d.className = 'msg bot greeter-msg';
+  d.innerHTML = `${agentAvatar('greeter')}<div class="bubble"><div class="agent-tag greeter">Greeter</div><div>${esc(text)}</div></div>`;
+  chat.insertBefore(d, info);
+  setAgent('greeter');
+}
+
+// ── Claude API call ───────────────────────────────────────────────
+async function callClaude(agent, userMessage) {
+  const kb = buildKB(agent);
+  const systemPrompt = kb
+    ? `${SYSTEM_PROMPTS[agent]}\n\n---\n## KNOWLEDGE BASE\n\n${kb}`
+    : SYSTEM_PROMPTS[agent];
+
+  const messages = [...history, { role: 'user', content: userMessage }];
+
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true',
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 1024,
+      system: systemPrompt,
+      messages,
+    }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error?.message || `API error ${res.status}`);
+  }
+
+  const data = await res.json();
+  return data.content[0].text;
+}
+
+// ── Chat logic ────────────────────────────────────────────────────
+async function send() {
+  const input = document.getElementById('msg');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  autoResize(input);
+
+  addUserMsg(text);
+  const thinking = addThinking();
+  document.getElementById('sendBtn').disabled = true;
+
+  try {
+    let maxHops = 3, hops = 0, response, route;
+
+    while (hops < maxHops) {
+      response = await callClaude(currentAgent, text);
+      hops++;
+      const m = ROUTE_RE.exec(response);
+      route = m ? m[1].toLowerCase() : null;
+      const clean = response.replace(ROUTE_RE, '').trim();
+
+      if (route === 'end') {
+        thinking.remove();
+        const farewell = "Thanks for using the GlobalEdge Financial Intelligence Assistant. Reach out anytime you need another briefing!";
+        addBotMsg(farewell, currentAgent);
+        speak(farewell);
+        history.push({ role: 'user', content: text });
+        history.push({ role: 'assistant', content: farewell });
+        return;
+      }
+
+      if (route && route !== currentAgent) {
+        currentAgent = route;
+        setAgent(currentAgent);
+        continue;
+      }
+
+      thinking.remove();
+      addBotMsg(clean, currentAgent);
+      speak(clean);
+      history.push({ role: 'user', content: text });
+      history.push({ role: 'assistant', content: clean });
+      return;
+    }
+
+    thinking.remove();
+    addBotMsg("I'm having trouble routing your question — could you rephrase it?", currentAgent);
+  } catch(e) {
+    thinking.remove();
+    addBotMsg(`Error: ${e.message}`, 'greeter');
+  } finally {
+    document.getElementById('sendBtn').disabled = false;
+    document.getElementById('msg').focus();
+  }
+}
+
+function resetChat() {
+  window.speechSynthesis?.cancel();
+  currentAgent = 'greeter';
+  history = [];
+  document.getElementById('chat').innerHTML = '';
+  // Re-add greeter-info
+  const info = document.createElement('div');
+  info.className = 'greeter-info';
+  info.id = 'greeter-info';
+  info.innerHTML = `
+    <div class="agent-orbit-wrap">
+      <div class="orbit-row">
+        <div class="orbit-node"><div class="orbit-person">🧑</div><div class="orbit-label">You</div></div>
+        <span class="orbit-arrow-wrap"><span class="orbit-arrow">›</span></span>
+        <div class="orbit-node"><div class="orbit-ball" id="ob-g" style="background:radial-gradient(circle at 35% 35%,#b0b0b0,#606060,#2a2a2a)">G</div><div class="orbit-label">Greeter</div></div>
+        <span class="orbit-arrow-wrap"><span class="orbit-arrow">›</span></span>
+        <div class="orbit-node"><div class="orbit-ball" id="ob-n" style="background:radial-gradient(circle at 35% 35%,#6ecfa0,#2d6a4f,#0f3320)">N</div><div class="orbit-label">Market<br>News</div></div>
+        <span class="orbit-arrow-wrap"><span class="orbit-arrow">›</span></span>
+        <div class="orbit-node"><div class="orbit-ball" id="ob-s" style="background:radial-gradient(circle at 35% 35%,#f0c060,#b45309,#6b2e00)">S</div><div class="orbit-label">Securities</div></div>
+        <span class="orbit-arrow-wrap"><span class="orbit-arrow">›</span></span>
+        <div class="orbit-node"><div class="orbit-ball" id="ob-e" style="background:radial-gradient(circle at 35% 35%,#b48df0,#6d28d9,#320a7a)">E</div><div class="orbit-label">Executive</div></div>
+        <span class="orbit-arrow-wrap"><span class="orbit-arrow">›</span></span>
+        <div class="orbit-node"><div class="orbit-wave">～</div><div class="orbit-label">Response</div></div>
+      </div>
+      <div class="orbit-caption">Ask anything — the right specialist responds automatically</div>
+    </div>
+    <div class="info-section">
+      <div class="info-section-head">How Agents Transfer</div>
+      <div class="info-section-body">
+        <div class="routing-diagram">
+          <div class="route-row"><div class="route-from"><span class="route-dot" style="background:#767676"></span>Greeter</div><span class="route-arrow">→</span><div class="route-targets">Routes to <b>Market News</b>, <b>Securities</b>, or <b>Executive</b> based on your question</div></div>
+          <div class="route-row"><div class="route-from"><span class="route-dot" style="background:#2d6a4f"></span>News</div><span class="route-arrow">→</span><div class="route-targets">Transfers to <b>Securities</b> for stock/filing details. Transfers to <b>Executive</b> for synthesis.</div></div>
+          <div class="route-row"><div class="route-from"><span class="route-dot" style="background:#b45309"></span>Securities</div><span class="route-arrow">→</span><div class="route-targets">Transfers to <b>Market News</b> for market context. Transfers to <b>Executive</b> for synthesis.</div></div>
+          <div class="route-row"><div class="route-from"><span class="route-dot" style="background:#6d28d9"></span>Executive</div><span class="route-arrow">→</span><div class="route-targets">Transfers to <b>Market News</b> or <b>Securities</b> if you drill into specifics.</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="info-section">
+      <div class="info-section-head">Agents &amp; Roles</div>
+      <div class="info-section-body">
+        <table class="agent-table">
+          <tr><td><span class="dot" style="background:#767676"></span>Greeter</td><td>Welcomes you, detects intent, routes to the right specialist</td></tr>
+          <tr><td><span class="dot" style="background:#2d6a4f"></span>Market News</td><td>Financial news — Fed policy, oil prices, crypto, tech earnings, market sentiment</td></tr>
+          <tr><td><span class="dot" style="background:#b45309"></span>Securities</td><td>Stock prices, SEC filings, 10-Q data, revenue breakdowns, risk factors</td></tr>
+          <tr><td><span class="dot" style="background:#6d28d9"></span>Executive</td><td>Synthesized morning briefing, client recommendations, portfolio risks — full KB access</td></tr>
+        </table>
+      </div>
+    </div>`;
+  document.getElementById('chat').appendChild(info);
+  setAgent('greeter');
+  greet();
+}
+
+// ── DOM helpers ───────────────────────────────────────────────────
+function addUserMsg(text) {
+  const chat = document.getElementById('chat');
+  const d = document.createElement('div');
+  d.className = 'msg user';
+  d.innerHTML = `<div class="avatar">👤</div><div class="bubble">${esc(text)}</div>`;
+  chat.appendChild(d);
+  scrollBottom();
+}
+
+const AGENT_BALLS = {
+  greeter:    'radial-gradient(circle at 35% 35%, #b0b0b0, #606060, #2a2a2a)',
+  news:       'radial-gradient(circle at 35% 35%, #6ecfa0, #2d6a4f, #0f3320)',
+  securities: 'radial-gradient(circle at 35% 35%, #f0c060, #b45309, #6b2e00)',
+  executive:  'radial-gradient(circle at 35% 35%, #b48df0, #6d28d9, #320a7a)',
+};
+
+function agentAvatar(agent) {
+  const grad = AGENT_BALLS[agent] || AGENT_BALLS.greeter;
+  const initial = { greeter:'G', news:'N', securities:'S', executive:'E' }[agent] || '?';
+  return `<div class="avatar" style="background:${grad};border:none;box-shadow:inset -2px -2px 5px rgba(0,0,0,.35),inset 1px 1px 4px rgba(255,255,255,.3),0 2px 6px rgba(0,0,0,.2);color:#fff;font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;text-shadow:0 1px 2px rgba(0,0,0,.4);">${initial}</div>`;
+}
+
+function addBotMsg(text, agent) {
+  const chat = document.getElementById('chat');
+  const d = document.createElement('div');
+  d.className = 'msg bot';
+  d.innerHTML = `
+    ${agentAvatar(agent)}
+    <div class="bubble">
+      <div class="agent-tag ${agent}">${AGENT_LABELS[agent] || agent}</div>
+      <div>${esc(text)}</div>
+    </div>`;
+  chat.appendChild(d);
+  setAgent(agent);
+  scrollBottom();
+}
+
+function addThinking() {
+  const chat = document.getElementById('chat');
+  const d = document.createElement('div');
+  d.className = 'msg bot';
+  d.innerHTML = `<div class="avatar">🤖</div><div class="bubble"><div class="thinking"><b></b><b></b><b></b></div></div>`;
+  chat.appendChild(d);
+  scrollBottom();
+  return d;
+}
+
+function setAgent(agent) {
+  const dot = document.getElementById('agentDot');
+  const name = document.getElementById('agentName');
+  if (dot) dot.style.background = AGENT_COLORS[agent] || '#767676';
+  if (name) name.textContent = AGENT_LABELS[agent] || agent;
+}
+
+function scrollBottom() {
+  const c = document.getElementById('chat');
+  c.scrollTop = c.scrollHeight;
+}
+
+function esc(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+}
+
+// ── Voice input (Web Speech API) ─────────────────────────────────
+function toggleVoice() {
+  isListening ? stopListening() : startListening();
+}
+
+function startListening() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { setVoiceStatus('Voice not supported — try Chrome'); return; }
+  recognition = new SR();
+  recognition.lang = 'en-US';
+  recognition.interimResults = true;
+  recognition.continuous = false;
+
+  let gotResult = false;
+
+  recognition.onstart = () => {
+    isListening = true;
+    gotResult = false;
+    document.getElementById('voiceBtn').classList.add('recording');
+    setVoiceStatus('🎤 Listening...');
+  };
+  recognition.onresult = (e) => {
+    const t = Array.from(e.results).map(r => r[0].transcript).join('');
+    document.getElementById('msg').value = t;
+    autoResize(document.getElementById('msg'));
+    if (e.results[0].isFinal) { gotResult = true; stopListening(); send(); }
+  };
+  recognition.onerror = (e) => { if (e.error !== 'no-speech') stopListening(); };
+  recognition.onend = () => { if (!gotResult) stopListening(); };
+  recognition.start();
+}
+
+function stopListening() {
+  isListening = false;
+  recognition?.stop();
+  document.getElementById('voiceBtn').classList.remove('recording');
+  setTimeout(() => setVoiceStatus(''), 2000);
+}
+
+function setVoiceStatus(msg) {
+  document.getElementById('voiceStatus').textContent = msg;
+}
+
+// ── Voice output (Web Speech Synthesis) ──────────────────────────
+const VOICE_PREFS = [
+  'Alex', 'Google US English', 'Daniel', 'Tom', 'Fred',
+  'Google US English', 'Aaron', 'Arthur', 'Gordon', 'Reed',
+];
+
+let _narratorVoice = null;
+
+function getNarratorVoice() {
+  if (_narratorVoice) return _narratorVoice;
+  const voices = speechSynthesis.getVoices();
+  for (const pref of VOICE_PREFS) {
+    const v = voices.find(v => v.name.includes(pref));
+    if (v) { _narratorVoice = v; return v; }
+  }
+  return voices.find(v => v.lang === 'en-US') || null;
+}
+
+function speak(text) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.rate  = 0.92;
+  utt.pitch = 0.88;
+  utt.volume = 1.0;
+  const v = getNarratorVoice();
+  if (v) utt.voice = v;
+  window.speechSynthesis.speak(utt);
+}
+
+speechSynthesis.onvoiceschanged = () => { _narratorVoice = null; };
+
+// ── Utilities ─────────────────────────────────────────────────────
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 90) + 'px';
+}
+
+function useQ(el) {
+  document.getElementById('msg').value = el.textContent.trim();
+  send();
+}
+</script>
+</body>
+</html>
