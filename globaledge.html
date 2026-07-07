@@ -1665,7 +1665,7 @@ function addBotMsg(text, agent) {
     ${agentAvatar(agent)}
     <div class="bubble">
       <div class="agent-tag ${agent}">${AGENT_LABELS[agent] || agent}</div>
-      <div>${esc(text)}</div>
+      <div>${mdToHtml(text)}</div>
     </div>`;
   chat.appendChild(d);
   setAgent(agent);
@@ -1696,6 +1696,28 @@ function scrollBottom() {
 
 function esc(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+}
+
+// Lightweight markdown -> HTML for chat bubbles (headers, bold, bullets)
+function mdToHtml(raw) {
+  let s = raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  s = s.replace(/^#{1,6}\s*(.+)$/gm, '<strong>$1</strong>');
+  s = s.replace(/^[-*]\s+(.+)$/gm, '&bull;&nbsp;$1');
+  s = s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  s = s.replace(/\*(.+?)\*/g, '<em>$1</em>');
+  s = s.replace(/\n/g, '<br>');
+  return s;
+}
+
+// Strip markdown symbols so the voice reader doesn't say "hash" / "asterisk"
+function stripMarkdown(raw) {
+  return raw
+    .replace(/^#{1,6}\s*/gm, '')
+    .replace(/\*\*(.+?)\*\*/g, '$1')
+    .replace(/^[-*]\s+/gm, '')
+    .replace(/\*(.+?)\*/g, '$1')
+    .replace(/[_`~]/g, '')
+    .trim();
 }
 
 // ── Voice input (Web Speech API) ─────────────────────────────────
@@ -1762,7 +1784,7 @@ function getNarratorVoice() {
 function speak(text) {
   if (!window.speechSynthesis) return;
   window.speechSynthesis.cancel();
-  const utt = new SpeechSynthesisUtterance(text);
+  const utt = new SpeechSynthesisUtterance(stripMarkdown(text));
   utt.rate  = 0.92;
   utt.pitch = 0.88;
   utt.volume = 1.0;
