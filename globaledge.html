@@ -905,10 +905,71 @@
       </div>
     </div>
 
-    <!-- Experimental Configurations -->
+    <!-- Experimental Design & Rationale -->
     <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:.75rem;">
       <div style="background:var(--surface);padding:.5rem 1rem;border-bottom:1px solid var(--border);">
-        <span style="font-family:'Inter',sans-serif;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);">Experimental Configurations &mdash; 15 Runs (5 Test Cases &times; 3 Configs)</span>
+        <span style="font-family:'Inter',sans-serif;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);">Experimental Design &amp; Rationale</span>
+      </div>
+      <div style="padding:.85rem 1rem;font-size:.75rem;color:var(--muted);line-height:1.65;">
+        <div style="margin-bottom:.6rem;"><strong style="color:var(--ink);">Objective:</strong> Evaluate the impact of retrieval depth (Top-K) and response length (Max Tokens) on answer quality while keeping all other parameters constant.</div>
+        <div style="margin-bottom:.6rem;"><strong style="color:var(--ink);">Evaluation Method:</strong> Each configuration was evaluated across five financial test cases using an LLM-as-a-Judge framework that scored responses for Relevance, Groundedness, Accuracy, Completeness, and Risk Awareness.</div>
+        <div style="margin-bottom:.3rem;"><strong style="color:var(--ink);">Experimental Variables:</strong> Only Top-K Retrieval and Max Tokens were varied across Configurations A&ndash;C. All remaining RAG parameters were held constant.</div>
+        <div style="margin-bottom:.15rem;"><strong style="color:var(--ink);">Selection Rationale</strong> &mdash; these two parameters directly influence the two primary stages of a RAG pipeline:</div>
+        <ul style="margin:0 0 .6rem 1.1rem;padding:0;">
+          <li><strong style="color:var(--ink);">Top-K Retrieval</strong> determines how much relevant context is retrieved from the vector database.</li>
+          <li><strong style="color:var(--ink);">Max Tokens</strong> determines how much of that context the LLM can incorporate into its generated response.</li>
+          <li style="font-style:italic;">Varying only these parameters enabled a controlled evaluation of how retrieval depth and response length affect answer quality while minimizing the influence of other factors.</li>
+        </ul>
+        <div style="font-weight:700;color:var(--ink);margin-bottom:.6rem;">Total Evaluations: 15 (5 Test Cases &times; 3 Configurations)</div>
+
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+          <div style="flex:1 1 320px;overflow-x:auto;">
+            <table style="width:100%;border-collapse:collapse;font-family:'Inter',sans-serif;font-size:.68rem;">
+              <thead>
+                <tr>
+                  <th style="text-align:left;padding:.35rem .5rem;background:#dbeafe;color:#1e3a8a;font-weight:700;">Parameter</th>
+                  <th style="text-align:center;padding:.35rem .5rem;background:#dbeafe;color:#1e3a8a;font-weight:700;">Config A</th>
+                  <th style="text-align:center;padding:.35rem .5rem;background:#dbeafe;color:#1e3a8a;font-weight:700;">Config B</th>
+                  <th style="text-align:center;padding:.35rem .5rem;background:#dbeafe;color:#1e3a8a;font-weight:700;">Config C</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom:1px solid var(--border);"><td style="padding:.35rem .5rem;font-weight:600;color:var(--ink);">Chunk Size</td><td style="text-align:center;padding:.35rem .5rem;">500</td><td style="text-align:center;padding:.35rem .5rem;">500</td><td style="text-align:center;padding:.35rem .5rem;">500</td></tr>
+                <tr style="border-bottom:1px solid var(--border);"><td style="padding:.35rem .5rem;font-weight:600;color:var(--ink);">Chunk Overlap</td><td style="text-align:center;padding:.35rem .5rem;">50</td><td style="text-align:center;padding:.35rem .5rem;">50</td><td style="text-align:center;padding:.35rem .5rem;">50</td></tr>
+                <tr style="border-bottom:1px solid var(--border);background:#fef3e2;"><td style="padding:.35rem .5rem;font-weight:600;color:var(--ink);">Top-K</td><td style="text-align:center;padding:.35rem .5rem;font-weight:700;">8</td><td style="text-align:center;padding:.35rem .5rem;font-weight:700;">5</td><td style="text-align:center;padding:.35rem .5rem;font-weight:700;">10</td></tr>
+                <tr style="border-bottom:1px solid var(--border);"><td style="padding:.35rem .5rem;font-weight:600;color:var(--ink);">Temperature</td><td style="text-align:center;padding:.35rem .5rem;">0</td><td style="text-align:center;padding:.35rem .5rem;">0</td><td style="text-align:center;padding:.35rem .5rem;">0</td></tr>
+                <tr style="border-bottom:1px solid var(--border);"><td style="padding:.35rem .5rem;font-weight:600;color:var(--ink);">Top-p</td><td style="text-align:center;padding:.35rem .5rem;">1</td><td style="text-align:center;padding:.35rem .5rem;">1</td><td style="text-align:center;padding:.35rem .5rem;">1</td></tr>
+                <tr style="background:#fef3e2;"><td style="padding:.35rem .5rem;font-weight:600;color:var(--ink);">Max Tokens</td><td style="text-align:center;padding:.35rem .5rem;font-weight:700;">1000</td><td style="text-align:center;padding:.35rem .5rem;font-weight:700;">800</td><td style="text-align:center;padding:.35rem .5rem;font-weight:700;">1500</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="flex:1 1 280px;overflow-x:auto;">
+            <table style="width:100%;border-collapse:collapse;font-family:'Inter',sans-serif;font-size:.68rem;">
+              <thead>
+                <tr>
+                  <th style="text-align:left;padding:.35rem .5rem;background:#dbeafe;color:#1e3a8a;font-weight:700;">Test Case</th>
+                  <th style="text-align:center;padding:.35rem .5rem;background:#dbeafe;color:#1e3a8a;font-weight:700;">Config A</th>
+                  <th style="text-align:center;padding:.35rem .5rem;background:#dbeafe;color:#1e3a8a;font-weight:700;">Config B</th>
+                  <th style="text-align:center;padding:.35rem .5rem;background:#dbeafe;color:#1e3a8a;font-weight:700;">Config C</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom:1px solid var(--border);background:#fef9e7;"><td style="padding:.35rem .5rem;font-weight:600;color:var(--ink);">Test Case 1 &mdash; Amazon</td><td style="text-align:center;padding:.35rem .5rem;color:#2d6a4f;">&check;</td><td style="text-align:center;padding:.35rem .5rem;color:#2d6a4f;">&check;</td><td style="text-align:center;padding:.35rem .5rem;color:#2d6a4f;">&check;</td></tr>
+                <tr style="border-bottom:1px solid var(--border);background:#fef9e7;"><td style="padding:.35rem .5rem;font-weight:600;color:var(--ink);">Test Case 2 &mdash; Apple</td><td style="text-align:center;padding:.35rem .5rem;color:#2d6a4f;">&check;</td><td style="text-align:center;padding:.35rem .5rem;color:#2d6a4f;">&check;</td><td style="text-align:center;padding:.35rem .5rem;color:#2d6a4f;">&check;</td></tr>
+                <tr style="border-bottom:1px solid var(--border);background:#fef9e7;"><td style="padding:.35rem .5rem;font-weight:600;color:var(--ink);">Test Case 3 &mdash; Bitcoin</td><td style="text-align:center;padding:.35rem .5rem;color:#2d6a4f;">&check;</td><td style="text-align:center;padding:.35rem .5rem;color:#2d6a4f;">&check;</td><td style="text-align:center;padding:.35rem .5rem;color:#2d6a4f;">&check;</td></tr>
+                <tr style="border-bottom:1px solid var(--border);background:#fef9e7;"><td style="padding:.35rem .5rem;font-weight:600;color:var(--ink);">Test Case 4 &mdash; JPM</td><td style="text-align:center;padding:.35rem .5rem;color:#2d6a4f;">&check;</td><td style="text-align:center;padding:.35rem .5rem;color:#2d6a4f;">&check;</td><td style="text-align:center;padding:.35rem .5rem;color:#2d6a4f;">&check;</td></tr>
+                <tr style="background:#fef9e7;"><td style="padding:.35rem .5rem;font-weight:600;color:var(--ink);">Test Case 5 &mdash; Nvidia</td><td style="text-align:center;padding:.35rem .5rem;color:#2d6a4f;">&check;</td><td style="text-align:center;padding:.35rem .5rem;color:#2d6a4f;">&check;</td><td style="text-align:center;padding:.35rem .5rem;color:#2d6a4f;">&check;</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Experimental Configurations (Results) -->
+    <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:.75rem;">
+      <div style="background:var(--surface);padding:.5rem 1rem;border-bottom:1px solid var(--border);">
+        <span style="font-family:'Inter',sans-serif;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);">Results Summary &mdash; 15 Runs (5 Test Cases &times; 3 Configs)</span>
       </div>
       <div style="padding:.6rem 1rem .8rem;overflow-x:auto;">
         <table style="width:100%;border-collapse:collapse;font-family:'Inter',sans-serif;font-size:.7rem;">
