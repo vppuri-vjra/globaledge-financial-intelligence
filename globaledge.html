@@ -150,6 +150,8 @@
     flex-direction: column;
   }
   .tab-panel.active { display: flex; }
+  #tab-eval { overflow-y: auto; }
+  #tab-eval.active { display: block !important; }
 
   #tab-overview {
     overflow-y: auto;
@@ -509,11 +511,15 @@
           </div>
           <div style="padding:.5rem .6rem;background:var(--surface);border-radius:6px;">
             <div style="font-family:'Cormorant Garamond',serif;font-size:.85rem;font-weight:600;color:var(--ink);margin-bottom:2px;">LLM</div>
-            <div style="font-size:.72rem;color:var(--muted);line-height:1.4;"><strong style="color:var(--ink)">GPT-4.1</strong><br>temp 0.3, max 1000 tokens<br>top-k=8</div>
+            <div style="font-size:.72rem;color:var(--muted);line-height:1.4;"><strong style="color:var(--ink)">GPT-4.1</strong>, temp 0<br>3 configs A/B/C tested<br>(top-k 5/8/10)</div>
           </div>
           <div style="padding:.5rem .6rem;background:var(--surface);border-radius:6px;">
             <div style="font-family:'Cormorant Garamond',serif;font-size:.85rem;font-weight:600;color:var(--ink);margin-bottom:2px;">Evaluation</div>
-            <div style="font-size:.72rem;color:var(--muted);line-height:1.4;"><strong style="color:var(--ink)">LLM-as-a-Judge</strong><br>GPT-4.1, 5 metrics<br>Results &rarr; n8n DataTable</div>
+            <div style="font-size:.72rem;color:var(--muted);line-height:1.4;"><strong style="color:var(--ink)">LLM-as-a-Judge</strong><br>GPT-4.1, 5 metrics<br>15 runs &rarr; n8n DataTable</div>
+          </div>
+          <div style="padding:.5rem .6rem;background:var(--surface);border-radius:6px;">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:.85rem;font-weight:600;color:var(--ink);margin-bottom:2px;">Ingestion Run</div>
+            <div style="font-size:.72rem;color:var(--muted);line-height:1.4;"><strong style="color:var(--ink)">3 docs</strong> &rarr; 1,001 chunks<br>&rarr; 2,444 embeddings</div>
           </div>
         </div>
       </div>
@@ -536,21 +542,21 @@
                 <span style="font-size:.9rem;">📰</span>
                 <div>
                   <div style="font-family:'Inter',sans-serif;font-size:.65rem;font-weight:600;color:#1a1a2e;">Financial News CSV</div>
-                  <div style="font-family:'Inter',sans-serif;font-size:.58rem;color:#767676;">market_news.csv</div>
+                  <div style="font-family:'Inter',sans-serif;font-size:.58rem;color:#767676;">global_news.csv</div>
                 </div>
               </div>
               <div style="padding:.5rem 1rem;display:flex;align-items:center;gap:.3rem;border-right:1px solid #e8e6e1;">
                 <span style="font-size:.9rem;">📈</span>
                 <div>
                   <div style="font-family:'Inter',sans-serif;font-size:.65rem;font-weight:600;color:#1a1a2e;">Stock Prices CSV</div>
-                  <div style="font-family:'Inter',sans-serif;font-size:.58rem;color:#767676;">stock_prices.csv</div>
+                  <div style="font-family:'Inter',sans-serif;font-size:.58rem;color:#767676;">stock_price_details.csv</div>
                 </div>
               </div>
               <div style="padding:.5rem 1rem;display:flex;align-items:center;gap:.3rem;">
                 <span style="font-size:.9rem;">📄</span>
                 <div>
                   <div style="font-family:'Inter',sans-serif;font-size:.65rem;font-weight:600;color:#1a1a2e;">SEC 10-Q PDF</div>
-                  <div style="font-family:'Inter',sans-serif;font-size:.58rem;color:#767676;">apple_10q.pdf</div>
+                  <div style="font-family:'Inter',sans-serif;font-size:.58rem;color:#767676;">sec_filings_10q.pdf</div>
                 </div>
               </div>
             </div>
@@ -582,7 +588,7 @@
             <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;">
               <span style="font-family:'Inter',sans-serif;font-size:.58rem;background:#fffbf0;border:1px solid rgba(180,83,9,.3);padding:.15rem .4rem;border-radius:3px;color:#b45309;">Chat Trigger</span>
               <span style="color:#ddd8d0;">&rarr;</span>
-              <span style="font-family:'Inter',sans-serif;font-size:.58rem;background:#fffbf0;border:1px solid rgba(180,83,9,.3);padding:.15rem .4rem;border-radius:3px;color:#b45309;">QA Chain (GPT-4.1 + Pinecone top_k=8)</span>
+              <span style="font-family:'Inter',sans-serif;font-size:.58rem;background:#fffbf0;border:1px solid rgba(180,83,9,.3);padding:.15rem .4rem;border-radius:3px;color:#b45309;">QA Chain (GPT-4.1 + Pinecone, 3 configs A/B/C)</span>
               <span style="color:#ddd8d0;">&rarr;</span>
               <span style="font-family:'Inter',sans-serif;font-size:.58rem;background:#f8f5ff;border:1px solid rgba(109,40,217,.3);padding:.15rem .4rem;border-radius:3px;color:#6d28d9;">Merge + Pinecone Search</span>
               <span style="color:#ddd8d0;">&rarr;</span>
@@ -600,18 +606,18 @@
             <div style="display:flex;flex-direction:column;gap:.25rem;">
               <div style="display:flex;align-items:center;gap:.5rem;background:#fff;border:1px solid #e8e6e1;border-radius:5px;padding:.3rem .55rem;">
                 <span style="font-size:.75rem;">📰</span>
-                <div style="flex:1;"><span style="font-family:'Inter',sans-serif;font-size:.6rem;font-weight:600;color:#1a1a2e;">Financial News</span><span style="font-family:'Inter',sans-serif;font-size:.55rem;color:#a8a29e;margin-left:.4rem;">market_news.csv</span></div>
-                <span style="font-family:'Inter',sans-serif;font-size:.52rem;color:#767676;background:#f0fdf6;padding:.1rem .3rem;border-radius:2px;">15 articles &mdash; Fed policy, oil, crypto, tech earnings</span>
+                <div style="flex:1;"><span style="font-family:'Inter',sans-serif;font-size:.6rem;font-weight:600;color:#1a1a2e;">Financial News</span><span style="font-family:'Inter',sans-serif;font-size:.55rem;color:#a8a29e;margin-left:.4rem;">global_news.csv</span></div>
+                <span style="font-family:'Inter',sans-serif;font-size:.52rem;color:#767676;background:#f0fdf6;padding:.1rem .3rem;border-radius:2px;">500 articles &mdash; Fed policy, oil, crypto, tech earnings</span>
               </div>
               <div style="display:flex;align-items:center;gap:.5rem;background:#fff;border:1px solid #e8e6e1;border-radius:5px;padding:.3rem .55rem;">
                 <span style="font-size:.75rem;">📈</span>
-                <div style="flex:1;"><span style="font-family:'Inter',sans-serif;font-size:.6rem;font-weight:600;color:#1a1a2e;">Stock Prices</span><span style="font-family:'Inter',sans-serif;font-size:.55rem;color:#a8a29e;margin-left:.4rem;">stock_prices.csv</span></div>
+                <div style="flex:1;"><span style="font-family:'Inter',sans-serif;font-size:.6rem;font-weight:600;color:#1a1a2e;">Stock Prices</span><span style="font-family:'Inter',sans-serif;font-size:.55rem;color:#a8a29e;margin-left:.4rem;">stock_price_details.csv</span></div>
                 <span style="font-family:'Inter',sans-serif;font-size:.52rem;color:#767676;background:#fffbf0;padding:.1rem .3rem;border-radius:2px;">Daily OHLCV &mdash; AAPL, TSLA, GOOGL, BTC-USD, Gold</span>
               </div>
               <div style="display:flex;align-items:center;gap:.5rem;background:#fff;border:1px solid #e8e6e1;border-radius:5px;padding:.3rem .55rem;">
                 <span style="font-size:.75rem;">📄</span>
-                <div style="flex:1;"><span style="font-family:'Inter',sans-serif;font-size:.6rem;font-weight:600;color:#1a1a2e;">SEC Filings</span><span style="font-family:'Inter',sans-serif;font-size:.55rem;color:#a8a29e;margin-left:.4rem;">apple_10q.pdf</span></div>
-                <span style="font-family:'Inter',sans-serif;font-size:.52rem;color:#767676;background:#f8f5ff;padding:.1rem .3rem;border-radius:2px;">Apple Q2 2025 10-Q filing, 45 pages</span>
+                <div style="flex:1;"><span style="font-family:'Inter',sans-serif;font-size:.6rem;font-weight:600;color:#1a1a2e;">SEC Filings</span><span style="font-family:'Inter',sans-serif;font-size:.55rem;color:#a8a29e;margin-left:.4rem;">sec_filings_10q.pdf</span></div>
+                <span style="font-family:'Inter',sans-serif;font-size:.52rem;color:#767676;background:#f8f5ff;padding:.1rem .3rem;border-radius:2px;">126-page 10-Q filing &mdash; Alphabet, Apple, Tesla</span>
               </div>
             </div>
           </div>
@@ -635,7 +641,7 @@
                   QA Workflow
                 </div>
                 <div style="font-size:.55rem;color:#767676;line-height:1.7;">
-                  Chat Trigger &rarr; QA Chain (GPT-4.1) &rarr; Pinecone Retriever (top_k=8) &rarr; Merge &rarr; LLM-as-Judge &rarr; Extract Metrics &rarr; DataTable
+                  Chat Trigger &rarr; QA Chain (GPT-4.1, Config A/B/C) &rarr; Pinecone Retriever (top-k 5/8/10) &rarr; Merge &rarr; LLM-as-Judge &rarr; Extract Metrics &rarr; DataTable
                 </div>
               </div>
             </div>
@@ -660,7 +666,7 @@
                   <tr><td style="padding:.3rem .6rem;border-bottom:1px solid #f4f3f0;color:var(--ink);font-weight:600;">Risk Awareness</td><td style="padding:.3rem .6rem;border-bottom:1px solid #f4f3f0;color:#767676;">Are financial risks and caveats mentioned?</td></tr>
                   <tr style="background:#f8f4ee;">
                     <td style="padding:.4rem .6rem;font-weight:700;color:var(--ink);">Verdict</td>
-                    <td style="padding:.4rem .6rem;font-weight:600;color:var(--accent);">PASS / FAIL</td>
+                    <td style="padding:.4rem .6rem;font-weight:600;color:var(--accent);">Pass / Needs Improvement</td>
                   </tr>
                 </tbody>
               </table>
@@ -686,8 +692,8 @@
                 <div style="font-size:.55rem;color:#767676;line-height:1.65;">Automated quality assurance on every response. No human review bottleneck. 5-metric scoring catches hallucination, gaps, and missing risk flags.</div>
               </div>
               <div style="background:#fff;border:1px solid #e8e6e1;border-radius:7px;padding:.5rem .6rem;">
-                <div style="font-family:'Inter',sans-serif;font-size:.58rem;font-weight:700;color:#1a1a2e;margin-bottom:.2rem;">Why top-k=8?</div>
-                <div style="font-size:.55rem;color:#767676;line-height:1.65;">Balances recall vs noise. Financial queries need broader context than typical RAG (regulatory + market + price data).</div>
+                <div style="font-family:'Inter',sans-serif;font-size:.58rem;font-weight:700;color:#1a1a2e;margin-bottom:.2rem;">Why top-k=8 (Config A)?</div>
+                <div style="font-size:.55rem;color:#767676;line-height:1.65;">Not assumed &mdash; measured. A controlled A/B/C study (top-k 5/8/10, 15 LLM-judge runs) found top-k=8 won 3 of 5 test cases; going deeper (top-k=10) added noise and lowered groundedness.</div>
               </div>
               <div style="background:#fff;border:1px solid #e8e6e1;border-radius:7px;padding:.5rem .6rem;">
                 <div style="font-family:'Inter',sans-serif;font-size:.58rem;font-weight:700;color:#1a1a2e;margin-bottom:.2rem;">Why text-embedding-3-large?</div>
@@ -792,6 +798,19 @@
     <!-- Right Sidebar -->
     <aside class="sidebar">
       <div class="sidebar-section">
+        <div class="sidebar-kicker">📋 Required Test Cases</div>
+
+        <div class="q-group">
+          <div class="q-group-label">🔴 5 Evaluation Queries</div>
+          <span class="q-item" onclick="useQ(this)" style="white-space:normal;line-height:1.4;">Based on this week's news sentiment around Amazon, would you classify the current signal as bullish or bearish, and does the price data support that?</span>
+          <span class="q-item" onclick="useQ(this)" style="white-space:normal;line-height:1.4;">Should I invest in Apple right now? I heard Tim Cook is stepping down - is that a red flag? How's the stock been doing, and is there anything I should be worried about with the company's financials or risks?</span>
+          <span class="q-item" onclick="useQ(this)" style="white-space:normal;line-height:1.4;">Is now a good time to buy Bitcoin? News is saying it just crossed $78k - am I too late? What's the price trend looked like over the last few months, and what's driving the current rally?</span>
+          <span class="q-item" onclick="useQ(this)" style="white-space:normal;line-height:1.4;">J.P. Morgan is calling for the S&P 500 to hit 7,600 on AI earnings. Is that realistic? Should I buy in now or wait?</span>
+          <span class="q-item" onclick="useQ(this)" style="white-space:normal;line-height:1.4;">I read in the news that Nvidia is leading the AI rally. How has NVDA's stock been performing compared to the news sentiment?</span>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
         <div class="sidebar-kicker">Questions to Ask</div>
 
         <div class="q-group">
@@ -832,7 +851,7 @@
   </div><!-- #tab-chat -->
 
   <!-- Tab 3: Evaluation Dashboard -->
-  <div id="tab-eval" class="tab-panel" style="flex-direction:column;padding:1.25rem;overflow-y:auto;">
+  <div id="tab-eval" class="tab-panel" style="padding:1.25rem;">
 
     <!-- How Responses Are Evaluated -->
     <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:.75rem;">
@@ -849,89 +868,93 @@
           <span style="color:var(--border);">&rarr;</span>
           <span style="background:var(--surface);border:1px solid var(--border);padding:.2rem .5rem;border-radius:4px;font-size:.65rem;font-weight:600;color:var(--ink);">DataTable</span>
         </div>
-        Every response from the QA RAG chain is automatically evaluated by a second <strong style="color:var(--ink);">GPT-4.1</strong> call acting as an LLM-as-a-Judge. It scores each answer on 5 metrics (1&ndash;5 scale) and renders a PASS/FAIL verdict. Results are stored in an n8n DataTable for audit and analysis.
+        Every response from the QA RAG chain is automatically evaluated by a second <strong style="color:var(--ink);">GPT-4.1</strong> call acting as an LLM-as-a-Judge, scoring Relevance, Groundedness, Accuracy, Completeness, and Risk Awareness (1&ndash;10 each) and rendering a Pass / Needs Improvement verdict. Results below are the <strong style="color:var(--ink);">actual graded results</strong> from 15 real executions (5 financial test cases &times; 3 retrieval configurations), stored in an n8n DataTable.
       </div>
     </div>
 
-    <!-- 5 Metric Cards -->
+    <!-- Experimental Configurations -->
     <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:.75rem;">
       <div style="background:var(--surface);padding:.5rem 1rem;border-bottom:1px solid var(--border);">
-        <span style="font-family:'Inter',sans-serif;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);">Evaluation Metrics</span>
+        <span style="font-family:'Inter',sans-serif;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);">Experimental Configurations &mdash; 15 Runs (5 Test Cases &times; 3 Configs)</span>
       </div>
-      <div class="card-grid-3" style="padding:.75rem 1rem;">
-        <div style="padding:.6rem .7rem;background:var(--surface);border-radius:8px;border:1px solid var(--border);">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem;">
-            <div style="font-family:'Cormorant Garamond',serif;font-size:.9rem;font-weight:600;color:var(--ink);">Relevance</div>
-            <div style="font-family:'Inter',sans-serif;font-size:.7rem;font-weight:700;color:#2d6a4f;">4.5/5</div>
-          </div>
-          <div style="font-size:.68rem;color:var(--muted);line-height:1.45;">Does the answer directly address the broker's question?</div>
-        </div>
-        <div style="padding:.6rem .7rem;background:var(--surface);border-radius:8px;border:1px solid var(--border);">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem;">
-            <div style="font-family:'Cormorant Garamond',serif;font-size:.9rem;font-weight:600;color:var(--ink);">Groundedness</div>
-            <div style="font-family:'Inter',sans-serif;font-size:.7rem;font-weight:700;color:#2d6a4f;">5.0/5</div>
-          </div>
-          <div style="font-size:.68rem;color:var(--muted);line-height:1.45;">Is every claim supported by retrieved documents?</div>
-        </div>
-        <div style="padding:.6rem .7rem;background:var(--surface);border-radius:8px;border:1px solid var(--border);">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem;">
-            <div style="font-family:'Cormorant Garamond',serif;font-size:.9rem;font-weight:600;color:var(--ink);">Accuracy</div>
-            <div style="font-family:'Inter',sans-serif;font-size:.7rem;font-weight:700;color:#2d6a4f;">4.5/5</div>
-          </div>
-          <div style="font-size:.68rem;color:var(--muted);line-height:1.45;">Are financial figures, dates, and facts correct?</div>
-        </div>
+      <div style="padding:.6rem 1rem .8rem;overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-family:'Inter',sans-serif;font-size:.7rem;">
+          <thead>
+            <tr style="border-bottom:1px solid var(--border);">
+              <th style="text-align:left;padding:.35rem .5rem;color:var(--muted);font-weight:600;">Config</th>
+              <th style="text-align:left;padding:.35rem .5rem;color:var(--muted);font-weight:600;">Top-K</th>
+              <th style="text-align:left;padding:.35rem .5rem;color:var(--muted);font-weight:600;">Max Tokens</th>
+              <th style="text-align:left;padding:.35rem .5rem;color:var(--muted);font-weight:600;">Avg Overall Score</th>
+              <th style="text-align:left;padding:.35rem .5rem;color:var(--muted);font-weight:600;">Test Cases Won</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="background:rgba(45,106,79,.06);border-bottom:1px solid var(--border);">
+              <td style="padding:.4rem .5rem;font-weight:700;color:var(--ink);">A &mdash; Recommended</td>
+              <td style="padding:.4rem .5rem;color:var(--ink);">8</td>
+              <td style="padding:.4rem .5rem;color:var(--ink);">1000</td>
+              <td style="padding:.4rem .5rem;color:#2d6a4f;font-weight:700;">8.96 / 10</td>
+              <td style="padding:.4rem .5rem;color:var(--ink);">3 of 5</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:.4rem .5rem;font-weight:700;color:var(--ink);">B</td>
+              <td style="padding:.4rem .5rem;color:var(--ink);">5</td>
+              <td style="padding:.4rem .5rem;color:var(--ink);">800</td>
+              <td style="padding:.4rem .5rem;color:var(--ink);">8.76 / 10</td>
+              <td style="padding:.4rem .5rem;color:var(--ink);">1 of 5</td>
+            </tr>
+            <tr>
+              <td style="padding:.4rem .5rem;font-weight:700;color:var(--ink);">C</td>
+              <td style="padding:.4rem .5rem;color:var(--ink);">10</td>
+              <td style="padding:.4rem .5rem;color:var(--ink);">1500</td>
+              <td style="padding:.4rem .5rem;color:var(--ink);">8.64 / 10</td>
+              <td style="padding:.4rem .5rem;color:var(--ink);">1 of 5</td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="font-size:.65rem;color:var(--muted);margin-top:.5rem;">All configs: chunk size 500 / overlap 50, temperature 0, top-p 1 &mdash; only Top-K and Max Tokens were varied.</div>
       </div>
-      <div class="card-grid-2" style="padding:0 1rem .75rem 1rem;gap:.6rem;">
-        <div style="padding:.6rem .7rem;background:var(--surface);border-radius:8px;border:1px solid var(--border);">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem;">
-            <div style="font-family:'Cormorant Garamond',serif;font-size:.9rem;font-weight:600;color:var(--ink);">Completeness</div>
-            <div style="font-family:'Inter',sans-serif;font-size:.7rem;font-weight:700;color:#b45309;">4.0/5</div>
-          </div>
-          <div style="font-size:.68rem;color:var(--muted);line-height:1.45;">Does it cover all relevant angles (risk, opportunity, context)?</div>
+    </div>
+
+    <!-- Test Case Selector -->
+    <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:.75rem;">
+      <div style="background:var(--surface);padding:.5rem 1rem;border-bottom:1px solid var(--border);">
+        <span style="font-family:'Inter',sans-serif;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);">📋 Click a Test Case to Compare Config A / B / C</span>
+      </div>
+      <div style="padding:.5rem .75rem;display:flex;flex-direction:column;gap:.3rem;">
+        <div class="eval-q" onclick="showEval(0)" style="padding:.45rem .65rem;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:.72rem;color:var(--ink);line-height:1.5;transition:border-color .15s;">
+          <strong style="color:var(--accent);margin-right:.3rem;">TC1:</strong> Based on this week's news sentiment around Amazon, would you classify the current signal as bullish or bearish, and does the price data support that?
         </div>
-        <div style="padding:.6rem .7rem;background:var(--surface);border-radius:8px;border:1px solid var(--border);">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem;">
-            <div style="font-family:'Cormorant Garamond',serif;font-size:.9rem;font-weight:600;color:var(--ink);">Risk Awareness</div>
-            <div style="font-family:'Inter',sans-serif;font-size:.7rem;font-weight:700;color:#2d6a4f;">4.5/5</div>
-          </div>
-          <div style="font-size:.68rem;color:var(--muted);line-height:1.45;">Are financial risks and regulatory caveats highlighted?</div>
+        <div class="eval-q" onclick="showEval(1)" style="padding:.45rem .65rem;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:.72rem;color:var(--ink);line-height:1.5;transition:border-color .15s;">
+          <strong style="color:var(--accent);margin-right:.3rem;">TC2:</strong> Should I invest in Apple right now? I heard Tim Cook is stepping down — is that a red flag? How's the stock been doing?
+        </div>
+        <div class="eval-q" onclick="showEval(2)" style="padding:.45rem .65rem;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:.72rem;color:var(--ink);line-height:1.5;transition:border-color .15s;">
+          <strong style="color:var(--accent);margin-right:.3rem;">TC3:</strong> Is now a good time to buy Bitcoin? News is saying it just crossed $78k — am I too late?
+        </div>
+        <div class="eval-q" onclick="showEval(3)" style="padding:.45rem .65rem;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:.72rem;color:var(--ink);line-height:1.5;transition:border-color .15s;">
+          <strong style="color:var(--accent);margin-right:.3rem;">TC4:</strong> J.P. Morgan is calling for the S&P 500 to hit 7,600 on AI earnings. Is that realistic? Should I buy in now or wait?
+        </div>
+        <div class="eval-q" onclick="showEval(4)" style="padding:.45rem .65rem;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:.72rem;color:var(--ink);line-height:1.5;transition:border-color .15s;">
+          <strong style="color:var(--accent);margin-right:.3rem;">TC5:</strong> Nvidia is leading the AI rally. How has NVDA's stock been performing compared to the news sentiment? <span style="color:var(--muted);">(evaluated after a QA system-prompt refinement)</span>
         </div>
       </div>
     </div>
 
-    <!-- Example Evaluation Result -->
-    <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:.75rem;">
-      <div style="background:var(--surface);padding:.5rem 1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
-        <span style="font-family:'Inter',sans-serif;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);">Example Evaluation Result</span>
-        <button onclick="regenerateEval()" style="font-family:'Inter',sans-serif;font-size:.6rem;font-weight:600;background:var(--accent);color:#fff;border:none;padding:.3rem .7rem;border-radius:5px;cursor:pointer;">Regenerate Evaluation</button>
+    <!-- Evaluation Result -->
+    <div id="eval-result" style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:.75rem;display:none;">
+      <div style="background:var(--surface);padding:.5rem 1rem;border-bottom:1px solid var(--border);">
+        <span style="font-family:'Inter',sans-serif;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);">Evaluation Result</span>
       </div>
-      <div id="eval-body" style="padding:1rem 1.25rem;">
+      <div id="eval-body" style="padding:1rem 1.25rem;"></div>
+    </div>
 
-        <div style="margin-bottom:.75rem;">
-          <div style="font-family:'Inter',sans-serif;font-size:.6rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.2rem;">Question</div>
-          <div id="eval-question" style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1rem;color:var(--ink);">What are Apple's key risk factors from the latest 10-Q?</div>
-        </div>
-
-        <div style="margin-bottom:.75rem;">
-          <div style="font-family:'Inter',sans-serif;font-size:.6rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.2rem;">Answer Snippet</div>
-          <div id="eval-answer" style="font-size:.78rem;color:var(--muted);line-height:1.6;background:var(--surface);border-radius:6px;padding:.5rem .75rem;">Based on Apple's Q2 2025 10-Q filing, the key risk factors include: (1) Supply chain concentration in Greater China with significant manufacturing exposure, (2) Foreign currency headwinds from strong dollar impact on international revenue, (3) Regulatory pressure from EU Digital Markets Act compliance costs, (4) Competition in AI requiring significant R&amp;D investment, and (5) Consumer spending sensitivity to macroeconomic conditions...</div>
-        </div>
-
-        <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:.75rem;">
-          <div id="eval-scores" style="display:flex;gap:.5rem;flex-wrap:wrap;">
-            <span style="font-family:'Inter',sans-serif;font-size:.6rem;background:#f0fdf4;border:1px solid #4ade80;padding:.2rem .5rem;border-radius:4px;color:#166534;font-weight:600;">Relevance: 5</span>
-            <span style="font-family:'Inter',sans-serif;font-size:.6rem;background:#f0fdf4;border:1px solid #4ade80;padding:.2rem .5rem;border-radius:4px;color:#166534;font-weight:600;">Groundedness: 5</span>
-            <span style="font-family:'Inter',sans-serif;font-size:.6rem;background:#fffbeb;border:1px solid #fbbf24;padding:.2rem .5rem;border-radius:4px;color:#92400e;font-weight:600;">Accuracy: 4</span>
-            <span style="font-family:'Inter',sans-serif;font-size:.6rem;background:#fffbeb;border:1px solid #fbbf24;padding:.2rem .5rem;border-radius:4px;color:#92400e;font-weight:600;">Completeness: 4</span>
-            <span style="font-family:'Inter',sans-serif;font-size:.6rem;background:#f0fdf4;border:1px solid #4ade80;padding:.2rem .5rem;border-radius:4px;color:#166534;font-weight:600;">Risk Awareness: 5</span>
-          </div>
-        </div>
-
-        <div style="display:flex;gap:1rem;align-items:center;">
-          <span id="eval-verdict" style="font-family:'Inter',sans-serif;font-size:.65rem;font-weight:700;background:#f0fdf4;border:1px solid #4ade80;padding:.25rem .7rem;border-radius:5px;color:#166534;">PASS</span>
-          <span id="eval-sources" style="font-family:'Inter',sans-serif;font-size:.6rem;color:var(--muted);">Sources cited: 3</span>
-        </div>
-
+    <!-- Key Experimental Findings -->
+    <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+      <div style="background:var(--surface);padding:.5rem 1rem;border-bottom:1px solid var(--border);">
+        <span style="font-family:'Inter',sans-serif;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);">Key Experimental Findings</span>
+      </div>
+      <div style="padding:.75rem 1rem;font-size:.75rem;color:var(--muted);line-height:1.7;">
+        Configuration A (top-k=8, 1,000 max tokens) delivered the strongest overall performance in Test Cases 1&ndash;3 and the highest average score (8.96/10) across all 15 runs. Configuration C achieved the highest score only in Test Case 4, and its extra retrieval depth (top-k=10) hurt Test Case 5 enough to trigger a <em>Needs Improvement</em> verdict. Configuration B produced the best balance of quality and efficiency for Test Case 5. Across all five test cases, increasing retrieval depth (Top-K) and response budget (Max Tokens) alone did not reliably improve answer quality &mdash; in several cases it slightly reduced groundedness and accuracy. QA system-prompt refinement (applied for Test Case 5) had a larger effect on evaluation quality than retrieval-depth tuning did.
       </div>
     </div>
 
@@ -1145,79 +1168,114 @@ function switchTab(name) {
 }
 
 // ── Regenerate Evaluation ─────────────────────────────────────────
-async function regenerateEval() {
-  if (!apiKey) { alert('Enter your API key first.'); return; }
-  const questionEl = document.getElementById('eval-question');
-  const answerEl = document.getElementById('eval-answer');
-  const scoresEl = document.getElementById('eval-scores');
-  const verdictEl = document.getElementById('eval-verdict');
-  const sourcesEl = document.getElementById('eval-sources');
+// Real graded results from the submitted PDF (5 test cases × 3 configurations, 15 LLM-as-a-Judge runs)
+const TESTCASES = [
+  {
+    q: "Based on this week's news sentiment around Amazon, would you classify the current signal as bullish or bearish, and does the price data support that?",
+    configs: {
+      A: { relevance: 10, groundedness: 10, accuracy: 10, completeness: 10, risk_awareness: 7, overall: 9.4, verdict: "Pass",
+        quality: "Highest quality response. Achieved perfect scores for relevance, groundedness, accuracy, and completeness, resulting in the highest overall score (9.4)." },
+      B: { relevance: 10, groundedness: 10, accuracy: 10, completeness: 9, risk_awareness: 7, overall: 9.2, verdict: "Pass",
+        quality: "Slightly more concise response. Maintained relevance, groundedness, and accuracy while losing one point in completeness, giving an overall score of 9.2." },
+      C: { relevance: 10, groundedness: 9, accuracy: 9, completeness: 9, risk_awareness: 7, overall: 8.8, verdict: "Pass",
+        quality: "Generated a broader response using additional retrieved context, but achieved slightly lower groundedness and accuracy than Configurations A and B, with an overall score of 8.8." },
+    },
+    keyOutcome: "Varying the retrieval depth (Top-K) and response budget (Max Tokens) influenced the quality of generated responses. Configuration A produced the highest-quality answer, Configuration B provided a strong balance between response quality and efficiency, while Configuration C demonstrated that increasing retrieval depth and response budget did not improve response quality and resulted in slightly lower groundedness, accuracy, and overall quality."
+  },
+  {
+    q: "Should I invest in Apple right now? I heard Tim Cook is stepping down — is that a red flag? How's the stock been doing, and is there anything I should be worried about with the company's financials or risks?",
+    configs: {
+      A: { relevance: 10, groundedness: 9, accuracy: 9, completeness: 8, risk_awareness: 9, overall: 9.0, verdict: "Pass",
+        quality: "Produced the strongest overall response. Directly addressed Tim Cook's departure, Apple's recent stock performance, and potential financial risks with the highest overall score (9.0) and strongest risk awareness." },
+      B: { relevance: 9, groundedness: 9, accuracy: 9, completeness: 7, risk_awareness: 8, overall: 8.4, verdict: "Pass",
+        quality: "Generated a concise, well-grounded response summarizing the CEO transition and stock performance. Reduced retrieval depth (Top-K=5) slightly lowered completeness, reducing the overall score to 8.4." },
+      C: { relevance: 10, groundedness: 9, accuracy: 9, completeness: 8, risk_awareness: 8, overall: 8.8, verdict: "Pass",
+        quality: "Retrieved additional supporting context and maintained perfect relevance. The additional context did not improve groundedness or accuracy compared with Configuration A, resulting in an overall score of 8.8." },
+    },
+    keyOutcome: "Configuration A produced the strongest overall answer by combining high relevance, good completeness, and the highest risk awareness. Configuration C demonstrated that increasing retrieval depth (Top-K) and response budget (Max Tokens) did not improve answer quality for this question. Configuration B generated the most concise response but showed a modest reduction in completeness and overall quality."
+  },
+  {
+    q: "Is now a good time to buy Bitcoin? News is saying it just crossed $78k — am I too late? What's the price trend looked like over the last few months, and what's driving the current rally?",
+    configs: {
+      A: { relevance: 10, groundedness: 9, accuracy: 9, completeness: 9, risk_awareness: 9, overall: 9.2, verdict: "Pass",
+        quality: "Produced the highest-quality and most comprehensive response — accurately summarized Bitcoin's recent price movement, market sentiment, supporting evidence, analyst cautions, and investment considerations, achieving the highest overall score (9.2)." },
+      B: { relevance: 9, groundedness: 9, accuracy: 9, completeness: 7, risk_awareness: 9, overall: 8.6, verdict: "Pass",
+        quality: "Generated a concise and well-grounded response that clearly explained recent Bitcoin price action and analyst sentiment. Lower retrieval depth slightly reduced completeness, resulting in an overall score of 8.6." },
+      C: { relevance: 9, groundedness: 8, accuracy: 8, completeness: 8, risk_awareness: 9, overall: 8.4, verdict: "Pass",
+        quality: "Retrieved additional supporting context and presented a balanced bullish/cautious outlook, but the broader response introduced extra context without improving answer quality, slightly reducing groundedness and accuracy (8.4)." },
+    },
+    keyOutcome: "Configuration A produced the strongest overall answer by combining excellent relevance, high completeness, and strong risk awareness. Configuration B delivered a concise and accurate response but sacrificed some completeness due to lower retrieval depth. Configuration C demonstrated that increasing retrieval depth and response budget did not improve answer quality and instead slightly reduced groundedness and accuracy."
+  },
+  {
+    q: "J.P. Morgan is calling for the S&P 500 to hit 7,600 on AI earnings. Is that realistic? Should I buy in now or wait?",
+    configs: {
+      A: { relevance: 10, groundedness: 9, accuracy: 9, completeness: 8, risk_awareness: 9, overall: 9.0, verdict: "Pass",
+        quality: "Produced a balanced and reliable response, accurately summarizing J.P. Morgan's revised S&P 500 target, the AI-driven growth assumptions, and investment risks, achieving an overall score of 9.0." },
+      B: { relevance: 10, groundedness: 10, accuracy: 10, completeness: 8, risk_awareness: 8, overall: 9.2, verdict: "Pass",
+        quality: "Generated a concise, highly accurate response with excellent grounding and accuracy. Lower retrieval depth slightly reduced completeness and risk discussion, but achieved a strong overall score of 9.2." },
+      C: { relevance: 10, groundedness: 10, accuracy: 10, completeness: 9, risk_awareness: 10, overall: 9.8, verdict: "Pass",
+        quality: "Retrieved additional supporting context and maintained excellent grounding and accuracy, combining perfect relevance, grounding, accuracy, and risk awareness with the most comprehensive response (9.8 — highest score of this test case)." },
+    },
+    keyOutcome: "Unlike the other test cases, increasing retrieval depth (Top-K) and response length (Max Tokens) helped here: Configuration C achieved the highest overall evaluation. Configuration B produced a concise, highly accurate answer but with less comprehensive risk coverage. Configuration A delivered a balanced, reliable response with slightly lower completeness than C."
+  },
+  {
+    q: "I read in the news that Nvidia is leading the AI rally. How has NVDA's stock been performing compared to the news sentiment?",
+    note: "Evaluated after refining the QA system prompt based on feedback from the initial LLM-as-a-Judge run.",
+    configs: {
+      A: { relevance: 9, groundedness: 9, accuracy: 9, completeness: 8, risk_awareness: 6, overall: 8.2, verdict: "Pass",
+        quality: "Produced a balanced, well-grounded response summarizing Nvidia's AI-driven growth and market sentiment. Passed after QA prompt improvements, with an overall score of 8.2." },
+      B: { relevance: 10, groundedness: 9, accuracy: 9, completeness: 8, risk_awareness: 6, overall: 8.4, verdict: "Pass",
+        quality: "Generated a more comprehensive, highly accurate response by combining evidence from multiple retrieved sources, achieving the highest score of this test case (8.4)." },
+      C: { relevance: 9, groundedness: 8, accuracy: 8, completeness: 7, risk_awareness: 5, overall: 7.4, verdict: "Needs Improvement",
+        quality: "Produced the most detailed response with broader supporting evidence, but despite the largest retrieval depth (Top-K=10, 1500 tokens) still omitted discussion of downside risks, resulting in a Needs Improvement verdict (7.4)." },
+    },
+    keyOutcome: "Configuration B achieved the strongest overall performance (8.4) by best balancing accuracy, grounding, and completeness. Configuration C, despite retrieving the largest context, did not adequately discuss investment risks, resulting in a Needs Improvement verdict — showing that prompt quality and evaluation criteria can matter more than retrieval depth alone."
+  },
+];
 
-  answerEl.innerHTML = '<div class="thinking"><b></b><b></b><b></b></div>';
-  scoresEl.innerHTML = '';
-  verdictEl.textContent = 'Evaluating...';
-  verdictEl.style.background = 'var(--surface)';
-  verdictEl.style.borderColor = 'var(--border)';
-  verdictEl.style.color = 'var(--muted)';
+function showEval(idx) {
+  const t = TESTCASES[idx];
+  const container = document.getElementById('eval-result');
+  container.style.display = 'block';
 
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true',
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 800,
-        system: `You are an LLM-as-a-Judge evaluating a RAG financial intelligence system. Given a question and context, generate a mock evaluation result.
+  document.querySelectorAll('.eval-q').forEach((el, i) => {
+    el.style.borderColor = i === idx ? 'var(--accent)' : 'var(--border)';
+    el.style.background = i === idx ? 'rgba(184,80,66,.04)' : '#fff';
+  });
 
-Output EXACTLY this JSON format (no markdown, no code fences):
-{"question":"<a financial question>","answer":"<a 2-3 sentence answer citing sources>","relevance":<1-5>,"groundedness":<1-5>,"accuracy":<1-5>,"completeness":<1-5>,"risk_awareness":<1-5>,"verdict":"PASS or FAIL","sources_cited":<number>}
-
-Make the question about financial markets, stocks, or SEC filings. The answer should reference specific data from financial news, stock prices, or Apple's 10-Q. Scores should be realistic (mostly 4-5, occasionally 3). Vary the question each time.`,
-        messages: [{ role: 'user', content: 'Generate a new evaluation result for the GlobalEdge Financial Intelligence system. Pick a different financial topic each time.' }],
-      }),
-    });
-    const data = await res.json();
-    const text = data.content?.[0]?.text || '';
-    const result = JSON.parse(text);
-
-    questionEl.textContent = result.question;
-    answerEl.textContent = result.answer;
-
-    const metrics = [
-      { name: 'Relevance', score: result.relevance },
-      { name: 'Groundedness', score: result.groundedness },
-      { name: 'Accuracy', score: result.accuracy },
-      { name: 'Completeness', score: result.completeness },
-      { name: 'Risk Awareness', score: result.risk_awareness },
-    ];
-
-    scoresEl.innerHTML = metrics.map(m => {
-      const isHigh = m.score >= 4;
-      const bg = isHigh ? '#f0fdf4' : '#fffbeb';
-      const border = isHigh ? '#4ade80' : '#fbbf24';
-      const color = isHigh ? '#166534' : '#92400e';
-      return `<span style="font-family:'Inter',sans-serif;font-size:.6rem;background:${bg};border:1px solid ${border};padding:.2rem .5rem;border-radius:4px;color:${color};font-weight:600;">${m.name}: ${m.score}</span>`;
-    }).join('');
-
-    const pass = result.verdict === 'PASS';
-    verdictEl.textContent = result.verdict;
-    verdictEl.style.background = pass ? '#f0fdf4' : '#fef2f2';
-    verdictEl.style.borderColor = pass ? '#4ade80' : '#f87171';
-    verdictEl.style.color = pass ? '#166534' : '#7f1d1d';
-    sourcesEl.textContent = `Sources cited: ${result.sources_cited}`;
-
-  } catch (e) {
-    answerEl.textContent = 'Error generating evaluation: ' + e.message;
-    verdictEl.textContent = 'ERROR';
-    verdictEl.style.background = '#fef2f2';
-    verdictEl.style.borderColor = '#f87171';
-    verdictEl.style.color = '#7f1d1d';
+  function configCard(name, c) {
+    const pass = c.verdict === 'Pass';
+    return `
+    <div style="border:1px solid var(--border);border-radius:8px;padding:.6rem .7rem;background:${name==='A'?'rgba(45,106,79,.05)':'#fff'};">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem;">
+        <span style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:.95rem;color:var(--ink);">Config ${name}</span>
+        <span style="font-family:'Inter',sans-serif;font-size:.6rem;font-weight:700;background:${pass?'#f0fdf4':'#fef2f2'};border:1px solid ${pass?'#4ade80':'#f87171'};padding:.15rem .5rem;border-radius:4px;color:${pass?'#166534':'#7f1d1d'};">${c.verdict}</span>
+      </div>
+      <div style="font-size:.62rem;color:var(--muted);line-height:1.9;margin-bottom:.4rem;">
+        Relevance ${c.relevance} &middot; Groundedness ${c.groundedness} &middot; Accuracy ${c.accuracy} &middot; Completeness ${c.completeness} &middot; Risk Awareness ${c.risk_awareness}
+        <br><strong style="color:var(--ink);">Overall: ${c.overall}/10</strong>
+      </div>
+      <div style="font-size:.68rem;color:var(--muted);line-height:1.55;">${c.quality}</div>
+    </div>`;
   }
+
+  document.getElementById('eval-body').innerHTML = `
+    <div style="margin-bottom:.75rem;">
+      <div style="font-family:'Inter',sans-serif;font-size:.6rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.2rem;">Test Case ${idx+1}</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1rem;color:var(--ink);">${t.q}</div>
+      ${t.note ? `<div style="font-size:.65rem;color:var(--accent);margin-top:.3rem;">${t.note}</div>` : ''}
+    </div>
+    <div class="card-grid-3" style="gap:.5rem;padding:0;margin-bottom:.75rem;">
+      ${configCard('A', t.configs.A)}
+      ${configCard('B', t.configs.B)}
+      ${configCard('C', t.configs.C)}
+    </div>
+    <div style="font-size:.72rem;color:var(--muted);line-height:1.6;padding:.5rem .7rem;background:var(--surface);border-radius:6px;border-left:3px solid var(--accent);">
+      <strong style="color:var(--ink);">Key Outcome:</strong> ${t.keyOutcome}
+    </div>
+  `;
+
+  container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 // ── Boot ──────────────────────────────────────────────────────────

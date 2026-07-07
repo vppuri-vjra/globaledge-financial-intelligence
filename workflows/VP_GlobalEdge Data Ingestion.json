@@ -115,8 +115,8 @@
       "name": "OpenAI Embeddings ",
       "credentials": {
         "openAiApi": {
-          "id": "B9zbTULuOLDxwMEX",
-          "name": "OpenAi account 136"
+          "id": "JklUB02AKX2A1PiF",
+          "name": "OpenAi account"
         }
       }
     },
@@ -231,7 +231,7 @@
     "executionOrder": "v1",
     "availableInMCP": false
   },
-  "versionId": "790b3eae-736c-4cc5-91bf-bed87ea254dd",
+  "versionId": "145c9c40-223a-462f-9e3d-d812e351a1bf",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "9eec91ab028da3044b893ad93da376fcd67c0d37224cdead88c7c3ba95ce47dc"
